@@ -1,12 +1,12 @@
 {
  "id": "/casa/gres/",
- "name": "Taller de Color Gres",
- "short_name": "Color Gres",
+ "name": "Formulador — Leria Manbrán Cerámica Gres",
+ "short_name": "Formulador",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
- "background_color": "#ECEEEA",
- "theme_color": "#23458F",
+ "background_color": "#EEEDE8",
+ "theme_color": "#3F6656",
  "lang": "es",
  "icons": [
   {
