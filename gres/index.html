@@ -1,0 +1,867 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#23458F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Color Gres">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html,body{background:#ECEEEA}@media (prefers-color-scheme:dark){html,body{background:#141917}}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+</head><body>
+<title>Taller de Color Gres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Banco de trabajo: barra de pestañas arriba, cada pestaña es una mesa de trabajo con tarjetas de datos; color objetivo siempre visible en la cabecera */
+:root{
+  --bg:#ECEEEA; --surface:#FAFBF8; --surface-2:#E2E6E0; --ink:#1E2621; --muted:#5E6A63; --line:#C9D0C9;
+  --accent:#23458F; --accent-soft:#DDE4F3; --kiln:#B4561C;
+  --ref:#23458F; --ref-bg:#DDE4F3; --sug:#8A5A00; --sug-bg:#F6E7C3; --comp:#1F6B45; --comp-bg:#D5EBDD; --ens:#4D5751; --ens-bg:#E3E6E3;
+  --ok:#1F6B45; --warn:#8A5A00; --bad:#A3271F; --bad-bg:#F5D9D6;
+  --ff-d:'Familjen Grotesk','Arial Narrow',Arial,sans-serif; --ff-b:'Atkinson Hyperlegible',system-ui,-apple-system,sans-serif; --ff-m:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1C2320; --surface-2:#252E2A; --ink:#E4EAE5; --muted:#9AA79F; --line:#34403A;
+  --accent:#8FA9EA; --accent-soft:#25304A; --kiln:#E08A50;
+  --ref:#9DB4EE; --ref-bg:#24304A; --sug:#E8C26E; --sug-bg:#3D3218; --comp:#7FD0A2; --comp-bg:#1C3A2A; --ens:#B7C1BB; --ens-bg:#2B322F;
+  --ok:#7FD0A2; --warn:#E8C26E; --bad:#F09088; --bad-bg:#46211E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1C2320; --surface-2:#252E2A; --ink:#E4EAE5; --muted:#9AA79F; --line:#34403A;
+  --accent:#8FA9EA; --accent-soft:#25304A; --kiln:#E08A50;
+  --ref:#9DB4EE; --ref-bg:#24304A; --sug:#E8C26E; --sug-bg:#3D3218; --comp:#7FD0A2; --comp-bg:#1C3A2A; --ens:#B7C1BB; --ens-bg:#2B322F;
+  --ok:#7FD0A2; --warn:#E8C26E; --bad:#F09088; --bad-bg:#46211E; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--ff-b);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--ff-d);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:1.45rem;font-weight:700}
+h2{font-size:1.25rem;font-weight:700}
+h3{font-size:1.02rem;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono,td.num,.num{font-family:var(--ff-m);font-variant-numeric:tabular-nums}
+.small{font-size:.86rem}
+header.top .wrap{padding-block:0}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-row{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;min-width:0}
+.brand small{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.target-chip{margin-left:auto;display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:.85rem;max-width:100%}
+.target-chip i{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);flex:none}
+.target-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+nav.tabs button{font:600 .9rem var(--ff-b);border:1px solid transparent;background:none;color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--ink)}
+nav.tabs button:hover{color:var(--ink)}
+.assume{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:10px 12px;border-radius:var(--r);background:var(--sug-bg);color:var(--ink);font-size:.9rem}
+.assume b{color:var(--sug)}
+section.view{display:none;margin-top:18px}
+section.view.on{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:12px;min-width:0}
+.card-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 14px}
+label.f{display:grid;gap:4px;font-size:.84rem;color:var(--muted);min-width:0}
+input,select,textarea{font:15px var(--ff-b);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+input[type=range]{padding:0;accent-color:var(--accent)}
+input[type=color]{padding:2px;height:40px}
+textarea{min-height:70px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:600 .9rem var(--ff-b);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.danger{color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:.82rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:4px;font:700 .68rem var(--ff-m);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.b-REF{color:var(--ref);background:var(--ref-bg)}
+.b-SUG{color:var(--sug);background:var(--sug-bg)}
+.b-COMP{color:var(--comp);background:var(--comp-bg)}
+.b-ENS{color:var(--ens);background:var(--ens-bg)}
+.b-DESC{color:var(--bad);background:var(--bad-bg)}
+.b-EJ{color:var(--muted);background:var(--surface-2)}
+.msg{padding:8px 10px;border-radius:8px;font-size:.88rem;display:flex;gap:8px;align-items:flex-start}
+.msg.ok{background:var(--comp-bg);color:var(--ok)}
+.msg.warn{background:var(--sug-bg);color:var(--ink)}
+.msg.warn b{color:var(--sug)}
+.msg.bad{background:var(--bad-bg);color:var(--ink)}
+.msg.bad b{color:var(--bad)}
+.msg.info{background:var(--ref-bg);color:var(--ink)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:700 .72rem var(--ff-b);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+td.num,th.num{text-align:right}
+tfoot td{font-weight:700;border-bottom:none}
+/* Paleta */
+.palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.sw{border:1px solid var(--line);border-radius:8px;padding:0;background:var(--surface);cursor:pointer;display:grid;overflow:hidden;text-align:left}
+.sw i{display:block;aspect-ratio:1.4;max-width:100%}
+.sw span{font-size:.68rem;padding:3px 5px;color:var(--muted);line-height:1.2}
+.sw[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.tile{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center}
+.tile .big{aspect-ratio:1;border-radius:12px;border:1px solid var(--line);max-width:100%;position:relative;overflow:hidden}
+.tex-granulada{background-image:radial-gradient(rgba(0,0,0,.35) 1px,transparent 1.4px),radial-gradient(rgba(255,255,255,.25) 1px,transparent 1.4px);background-size:7px 7px,11px 11px;background-position:0 0,3px 5px}
+.tex-moteada{background-image:radial-gradient(rgba(20,12,6,.75) 1.6px,transparent 2px),radial-gradient(rgba(20,12,6,.6) 1.1px,transparent 1.5px);background-size:23px 19px,13px 17px;background-position:4px 6px,9px 2px}
+.tex-rugosa{background-image:repeating-linear-gradient(35deg,rgba(0,0,0,.14) 0 2px,transparent 2px 6px),repeating-linear-gradient(-50deg,rgba(255,255,255,.12) 0 1px,transparent 1px 5px)}
+.gloss-brillante::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,0) 45%)}
+.gloss-satinado::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,0) 55%)}
+.slider{display:grid;grid-template-columns:96px 1fr 52px;gap:8px;align-items:center;font-size:.86rem}
+.slider output{font-family:var(--ff-m);text-align:right}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:600 .84rem var(--ff-b);padding:6px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.88rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--ff-m)}
+.option{border:1px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:8px;background:var(--bg)}
+.option ul{margin:0;padding-left:18px;font-size:.88rem}
+.steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:.92rem}
+.photo-wrap{position:relative;max-width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface-2);cursor:crosshair}
+.photo-wrap canvas{display:block;max-width:100%;height:auto}
+.cmp{display:grid;grid-template-columns:1fr 1fr;border-radius:10px;overflow:hidden;border:1px solid var(--line);height:90px}
+.cmp div{display:flex;align-items:flex-end;padding:6px 8px;font:600 .75rem var(--ff-m)}
+.de{font:700 1.6rem var(--ff-d)}
+.lib-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.lib-item i{width:48px;height:48px;border-radius:8px;border:1px solid var(--line)}
+.lib-list{display:grid;gap:8px}
+.haz{display:grid;gap:4px;padding:10px 12px;border-left:4px solid var(--line);background:var(--bg);border-radius:0 8px 8px 0;font-size:.88rem}
+.haz.alto{border-left-color:var(--bad)}
+.haz.medio{border-left-color:var(--warn)}
+.haz.bajo{border-left-color:var(--ok)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:700;z-index:50;font-size:.9rem;max-width:calc(100% - 32px)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;border-radius:8px;background:var(--bad-bg);font-size:.88rem}
+details summary{cursor:pointer;font-weight:700}
+@media (max-width:560px){.tile{grid-template-columns:90px 1fr}.slider{grid-template-columns:80px 1fr 46px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{header.top,nav.tabs,.btn,.assume{display:none!important}section.view{display:grid!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="brand"><small>Gres · pruebas de color y apariencia</small><h1>Taller de Color Gres</h1></div>
+      <div class="target-chip" id="hdrTarget" title="Color objetivo activo"><i></i><span>Sin objetivo</span></div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Secciones">
+      <button role="tab" data-v="objetivo" aria-selected="true">1 · Objetivo</button>
+      <button role="tab" data-v="propuesta">2 · Propuesta</button>
+      <button role="tab" data-v="formula">3 · Fórmula y lote</button>
+      <button role="tab" data-v="coccion">4 · Cocción</button>
+      <button role="tab" data-v="resultado">5 · Resultado</button>
+      <button role="tab" data-v="biblioteca">Biblioteca</button>
+      <button role="tab" data-v="materias">Materias primas</button>
+      <button role="tab" data-v="seguridad">Seguridad</button>
+      <button role="tab" data-v="guia">Flujo y supuestos</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="assume" id="assumeBar"></div>
+
+  <!-- 1 OBJETIVO -->
+  <section class="view on" id="v-objetivo">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h2>Paleta de partida</h2><span class="small muted">Toca un color y ajústalo</span></div>
+        <div class="palette" id="palette"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>Color objetivo</h2><span class="badge b-EJ" id="objIdBadge">nuevo</span></div>
+        <div class="tile">
+          <div class="big" id="objTile"></div>
+          <dl class="kv" id="objKv"></dl>
+        </div>
+        <div class="slider"><span>Tono</span><input type="range" id="sH" min="0" max="360" step="1"><output id="oH"></output></div>
+        <div class="slider"><span>Saturación</span><input type="range" id="sS" min="0" max="100" step="1"><output id="oS"></output></div>
+        <div class="slider"><span>Brillo</span><input type="range" id="sB" min="0" max="100" step="1"><output id="oB"></output></div>
+        <div class="row"><label class="f" style="flex:1 1 140px">HEX<input id="hexIn" maxlength="7" class="mono"></label><label class="f" style="flex:0 0 70px">Selector<input type="color" id="colorIn"></label></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Apariencia y condiciones</h2>
+      <div class="fields">
+        <div class="f" style="grid-column:1/-1"><span class="small muted">Brillo de superficie</span><div class="seg" id="segBrillo" data-k="brillo"><button>mate</button><button>satinado</button><button>brillante</button></div></div>
+        <div class="f" style="grid-column:1/-1"><span class="small muted">Textura</span><div class="seg" id="segTextura" data-k="textura"><button>lisa</button><button>granulada</button><button>moteada</button><button>rugosa</button></div></div>
+        <label class="f">Nombre del objetivo<input id="objNombre" placeholder="Ej.: CAFÉ TOSTADO MATE"></label>
+        <label class="f">Acabado<select id="objAcabado"><option>pasta vista</option><option>esmalte transparente</option><option>engobe</option></select></label>
+        <label class="f">Uniformidad del color<select id="objUnif"><option>uniforme</option><option>variegado suave</option><option>muy variegado</option></select></label>
+        <label class="f">Tolerancia ΔE2000 aceptable<input type="number" id="objTol" min="0.5" step="0.5" value="5"></label>
+        <label class="f" style="grid-column:1/-1">Notas (uso, referencia visual, pieza)<textarea id="objNotas"></textarea></label>
+      </div>
+      <div id="objMsgs" style="display:grid;gap:6px"></div>
+      <div class="row"><button class="btn pri" id="btnObjSave">Guardar objetivo</button><button class="btn" id="btnObjNew">Nuevo objetivo</button><button class="btn" id="btnGoProp">Ver propuestas →</button></div>
+    </div>
+  </section>
+
+  <!-- 2 PROPUESTA -->
+  <section class="view" id="v-propuesta">
+    <div class="card">
+      <div class="card-h"><h2>Propuestas de partida</h2><span class="badge b-SUG">sugerencia experimental</span></div>
+      <p class="small muted">Puntos de partida generados con reglas de referencia para pasta de gres coloreada en masa. No garantizan el color: cada propuesta se valida con una serie de ensayos. Los rangos vienen de la literatura técnica (ver Materias primas) y dependen de tu pasta base, cocción y atmósfera.</p>
+      <div id="propLab" class="small mono muted"></div>
+      <div class="grid3" id="propList"></div>
+    </div>
+    <div class="card">
+      <h2>Serie de ensayo recomendada</h2>
+      <p class="small">Con una sola cocción conviene cubrir un rango. La serie multiplica los colorantes de la propuesta elegida y deja la pasta base igual.</p>
+      <div class="row"><label class="f" style="flex:1 1 220px">Multiplicadores de la serie<input id="serieMult" value="0.5, 0.75, 1, 1.5, 2" class="mono"></label></div>
+    </div>
+  </section>
+
+  <!-- 3 FORMULA -->
+  <section class="view" id="v-formula">
+    <div class="card">
+      <div class="card-h"><h2 id="fTitle">Fórmula</h2><div class="row"><span id="fBadge"></span><select id="fPick" aria-label="Elegir fórmula" style="width:auto;max-width:260px"></select><button class="btn sm" id="btnFNew">Nueva</button></div></div>
+      <div class="fields">
+        <label class="f">Código<input id="fCodigo" class="mono"></label>
+        <label class="f">Nombre<input id="fNombre"></label>
+        <label class="f">Objetivo asociado<select id="fObj"></select></label>
+        <label class="f">Estado<select id="fEstado"><option value="SUG">Sugerencia experimental</option><option value="ENS">En ensayo</option><option value="COMP">Comprobada</option><option value="DESC">Descartada</option></select></label>
+        <label class="f">Deriva de<input id="fPadre" class="mono" readonly></label>
+        <label class="f">Etiquetas<input id="fTags" placeholder="ej.: cafe, moteado"></label>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h3>Pasta base (debe sumar 100 %)</h3><button class="btn sm" id="btnAddBase">+ componente</button></div>
+        <div class="tbl"><table><thead><tr><th>Materia prima</th><th class="num">%</th><th></th></tr></thead><tbody id="tBase"></tbody><tfoot><tr><td>Suma base</td><td class="num" id="sumBase"></td><td></td></tr></tfoot></table></div>
+        <div id="sumMsg"></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Adiciones (% sobre la base seca)</h3><button class="btn sm" id="btnAddAdd">+ adición</button></div>
+        <div class="tbl"><table><thead><tr><th>Colorante / aditivo</th><th class="num">%</th><th class="num">Ref.</th><th></th></tr></thead><tbody id="tAdd"></tbody><tfoot><tr><td>Total adiciones</td><td class="num" id="sumAdd"></td><td></td><td></td></tr></tfoot></table></div>
+        <p class="small muted">Convención de taller: la base suma 100 y los colorantes se agregan sobre ese 100. La tabla del lote muestra también el total normalizado.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Controles de compatibilidad y seguridad</h3>
+      <div id="fChecks" style="display:grid;gap:6px"></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h3>Cantidades por lote</h3><div class="seg" id="segLote"></div></div>
+      <div class="fields"><label class="f">Lote seco personalizado (g)<input type="number" id="loteG" min="1" step="1" value="500"></label><label class="f">Agua de amasado (% sobre seco)<input type="number" id="loteAgua" min="0" step="0.5" value="22"></label><label class="f">N° de probetas<input type="number" id="loteN" min="1" step="1" value="5"></label></div>
+      <div class="tbl"><table><thead><tr><th>Componente</th><th class="num">% receta</th><th class="num">% normalizado</th><th class="num">Gramos</th><th>✓</th></tr></thead><tbody id="tLote"></tbody><tfoot id="fLote"></tfoot></table></div>
+    </div>
+    <div class="card">
+      <h3>Procedimiento de preparación</h3>
+      <ol class="steps" id="procSteps"></ol>
+      <label class="f">Notas de preparación<textarea id="fNotas"></textarea></label>
+      <div class="row"><button class="btn pri" id="btnFSave">Guardar fórmula</button><button class="btn" id="btnFDup">Duplicar como versión nueva</button><button class="btn" id="btnFSerie">Crear serie de ensayo</button><button class="btn danger" id="btnFDel">Eliminar</button></div>
+      <div id="fConfirm"></div>
+    </div>
+  </section>
+
+  <!-- 4 COCCION -->
+  <section class="view" id="v-coccion">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h2>Registro de cocción</h2><select id="cPick" aria-label="Elegir cocción" style="width:auto;max-width:260px"></select></div>
+        <div class="fields">
+          <label class="f">Código<input id="cCodigo" class="mono"></label>
+          <label class="f">Fecha<input type="date" id="cFecha"></label>
+          <label class="f">Horno<input id="cHorno" placeholder="Eléctrico 60 L"></label>
+          <label class="f">Cono objetivo<select id="cCono"></select></label>
+          <label class="f">Cono testigo alcanzado<input id="cConoReal" placeholder="Ej.: 6 doblado a las 4"></label>
+          <label class="f">T máx. controlador (°C)<input type="number" id="cTmax"></label>
+          <label class="f">Mantención a T máx. (min)<input type="number" id="cSoak"></label>
+          <label class="f">Atmósfera<select id="cAtm"><option>oxidación</option><option>reducción</option><option>neutra</option></select></label>
+          <label class="f">Reducción (inicio / grado)<input id="cRed" placeholder="Ej.: desde cono 010, moderada"></label>
+          <label class="f">Enfriamiento<select id="cEnf"><option>natural</option><option>lento controlado</option><option>rápido</option></select></label>
+          <label class="f">Ubicación en el horno<input id="cUbic" placeholder="Repisa media, centro"></label>
+          <label class="f" style="grid-column:1/-1">Curva (rampas)<textarea id="cCurva" placeholder="100 °C/h hasta 600 °C; 150 °C/h hasta 1100 °C; 60 °C/h hasta 1222 °C"></textarea></label>
+          <label class="f" style="grid-column:1/-1">Notas<textarea id="cNotas"></textarea></label>
+        </div>
+        <div class="row"><button class="btn pri" id="btnCSave">Guardar cocción</button><button class="btn" id="btnCNew">Nueva cocción</button></div>
+      </div>
+      <div class="card">
+        <h3>Referencia de conos y curva tipo</h3>
+        <div class="tbl"><table><thead><tr><th>Cono Orton</th><th class="num">≈ °C a 60 °C/h</th><th>Uso</th></tr></thead><tbody id="tConos"></tbody></table></div>
+        <p class="small muted">Temperaturas aproximadas de equivalencia: el trabajo de calor depende de la velocidad final y la mantención. Usa siempre conos testigo junto a las probetas y anota cómo se doblaron.</p>
+        <div class="haz medio"><b>Curva de partida sugerida para cono 6, horno eléctrico</b><span>100 °C/h hasta 600 °C · 150 °C/h hasta 1100 °C · 60 °C/h hasta la temperatura de cono · mantención de 10 min · enfriamiento natural. Es una curva de referencia; ajústala a tu pasta y horno.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 RESULTADO -->
+  <section class="view" id="v-resultado">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-h"><h2>Resultado observado</h2><select id="rPick" aria-label="Elegir resultado" style="width:auto;max-width:260px"></select></div>
+        <div class="fields">
+          <label class="f">Fórmula ensayada<select id="rForm"></select></label>
+          <label class="f">Cocción<select id="rCoc"></select></label>
+          <label class="f">Fecha<input type="date" id="rFecha"></label>
+          <label class="f">Probeta / marca<input id="rMarca" placeholder="Ej.: P3 ×1,0"></label>
+        </div>
+        <label class="f">Foto de la probeta (con carta gris, luz difusa)<input type="file" id="rFoto" accept="image/*"></label>
+        <div class="row small"><span class="muted">Al tocar la foto:</span><div class="seg" id="segPick"><button aria-pressed="true" data-m="probeta">medir probeta</button><button data-m="gris">marcar carta gris</button></div></div>
+        <div class="photo-wrap" id="photoWrap" hidden><canvas id="cv"></canvas></div>
+        <p class="small muted" id="pickInfo">Sin foto: puedes ingresar el color medido a mano (HEX o L*a*b* de un colorímetro).</p>
+        <div class="fields">
+          <label class="f">Color medido HEX<input id="rHex" class="mono" maxlength="7"></label>
+          <label class="f">L*<input type="number" id="rL" step="0.1"></label>
+          <label class="f">a*<input type="number" id="rA" step="0.1"></label>
+          <label class="f">b*<input type="number" id="rB" step="0.1"></label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Comparación con el objetivo</h2>
+        <div class="cmp" id="cmpBox"><div id="cmpT">OBJETIVO</div><div id="cmpM">MEDIDO</div></div>
+        <div class="row" style="justify-content:space-between"><div><span class="small muted">ΔE2000</span><div class="de" id="deVal">—</div></div><div id="deMsg" style="flex:1 1 200px"></div></div>
+        <dl class="kv" id="deKv"></dl>
+        <div id="adjBox" style="display:grid;gap:6px"></div>
+        <button class="btn" id="btnAdjust">Crear versión ajustada de la fórmula</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Apariencia, propiedades y valoración</h3>
+      <div class="fields">
+        <label class="f">Brillo observado<select id="rBrillo"><option>mate</option><option>satinado</option><option>brillante</option></select></label>
+        <label class="f">Textura observada<select id="rTex"><option>lisa</option><option>granulada</option><option>moteada</option><option>rugosa</option></select></label>
+        <label class="f">Valoración color (1–5)<input type="number" id="rVc" min="1" max="5" step="1"></label>
+        <label class="f">Valoración acabado (1–5)<input type="number" id="rVa" min="1" max="5" step="1"></label>
+        <label class="f">Absorción de agua (%)<input type="number" id="rAbs" step="0.01"></label>
+        <label class="f">Contracción total (%)<input type="number" id="rCon" step="0.1"></label>
+        <label class="f">Peso seco (g) — para absorción<input type="number" id="rPs" step="0.01"></label>
+        <label class="f">Peso saturado (g)<input type="number" id="rPh" step="0.01"></label>
+        <label class="f">Largo marca crudo (mm)<input type="number" id="rL0" step="0.1" value="100"></label>
+        <label class="f">Largo marca cocido (mm)<input type="number" id="rL1" step="0.1"></label>
+      </div>
+      <div class="f"><span class="small muted">Defectos</span><div class="seg" id="segDef"><button>hinchamiento</button><button>corazón negro</button><button>deformación</button><button>grietas</button><button>ampollas</button><button>manchas</button><button>color desparejo</button><button>sobrecocción</button><button>subcocción</button></div></div>
+      <label class="f">Observaciones<textarea id="rNotas"></textarea></label>
+      <div class="row"><button class="btn pri" id="btnRSave">Guardar resultado</button><button class="btn" id="btnRNew">Nuevo resultado</button><button class="btn" id="btnRVal">Evaluar validación de la fórmula</button></div>
+      <div id="rValMsg"></div>
+    </div>
+  </section>
+
+  <!-- BIBLIOTECA -->
+  <section class="view" id="v-biblioteca">
+    <div class="card">
+      <div class="card-h"><h2>Biblioteca de fórmulas y resultados</h2><div class="row"><button class="btn sm" id="btnXlsx">Exportar a Excel</button><button class="btn sm" id="btnJson">Respaldo (JSON)</button><label class="btn sm" for="jsonIn">Restaurar respaldo</label><input type="file" id="jsonIn" accept="application/json" hidden></div></div>
+      <div class="fields">
+        <label class="f">Buscar<input id="qTxt" placeholder="código, nombre, materia prima, etiqueta"></label>
+        <label class="f">Estado<select id="qEst"><option value="">Todos</option><option value="SUG">Sugerencia</option><option value="ENS">En ensayo</option><option value="COMP">Comprobada</option><option value="DESC">Descartada</option></select></label>
+        <label class="f">Familia de color<select id="qFam"><option value="">Todas</option></select></label>
+        <label class="f">Contiene<select id="qMat"><option value="">Cualquier materia</option></select></label>
+      </div>
+      <div class="lib-list" id="libList"></div>
+      <div id="libConfirm"></div>
+    </div>
+    <div class="card">
+      <h3>Resultados registrados</h3>
+      <div class="tbl"><table><thead><tr><th>Fecha</th><th>Fórmula</th><th>Cocción</th><th>Color</th><th class="num">ΔE00</th><th>Brillo / textura</th><th class="num">Abs. %</th><th>Val.</th></tr></thead><tbody id="tRes"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- MATERIAS -->
+  <section class="view" id="v-materias">
+    <div class="card">
+      <div class="card-h"><h2>Catálogo de materias primas</h2><span class="badge b-REF">valores de referencia</span></div>
+      <p class="small muted">Rangos y límites orientativos para pasta de gres coloreada en masa, según literatura técnica general (Hamer; Rhodes; base de materiales Digitalfire; fichas de fabricantes de pigmentos). Reemplázalos por los de la ficha técnica de tu proveedor y por tus resultados comprobados. Marca "disponible" lo que tienes en el taller.</p>
+      <div class="tbl"><table><thead><tr><th>Disp.</th><th>Materia prima</th><th>Tipo</th><th>Efecto / función</th><th class="num">Rango típico %</th><th class="num">Máx. %</th><th>Atmósfera</th><th>Riesgo</th></tr></thead><tbody id="tMat"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- SEGURIDAD -->
+  <section class="view" id="v-seguridad">
+    <div class="card">
+      <h2>Seguridad y manejo</h2>
+      <div class="msg bad"><span><b>Reglas generales del taller.</b> Trabaja los polvos en húmedo; pesa con respirador P100/FFP3 en un lugar ventilado; limpia con paño húmedo o aspiradora HEPA y nunca barras en seco. No comas ni bebas en el taller. Usa guantes de nitrilo con óxidos y pigmentos. Ventila el horno hacia el exterior y no permanezcas en la sala durante la cocción. No viertas restos al alcantarillado: decanta y desecha el sólido según la normativa local. Lee siempre la Ficha de Datos de Seguridad (FDS) del lote que compraste: prevalece sobre estas notas.</span></div>
+      <div id="hazList" style="display:grid;gap:8px"></div>
+      <p class="small muted">Fuentes para completar: FDS del proveedor (Sistema Globalmente Armonizado), NIOSH Pocket Guide, monografías IARC, normativa chilena de higiene industrial (DS 594). Las clasificaciones resumidas aquí son orientativas y deben confirmarse en la FDS vigente.</p>
+    </div>
+  </section>
+
+  <!-- GUIA -->
+  <section class="view" id="v-guia">
+    <div class="grid2">
+      <div class="card">
+        <h2>Supuestos de trabajo</h2>
+        <div class="fields">
+          <label class="f">Cono de cocción<select id="cfgCono"></select></label>
+          <label class="f">Atmósfera<select id="cfgAtm"><option>oxidación</option><option>reducción</option></select></label>
+          <label class="f">Horno<select id="cfgHorno"><option>eléctrico</option><option>gas</option><option>leña</option></select></label>
+          <label class="f">Pasta base por defecto<select id="cfgBase"></select></label>
+        </div>
+        <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:4px">
+          <li>Pasta de gres clara de cono 6 (comercial o la receta base del catálogo) coloreada en masa.</li>
+          <li>Horno eléctrico, atmósfera oxidante, curva estándar con mantención corta.</li>
+          <li>Acabado pasta vista o con esmalte transparente. Una pasta de gres sin esmalte cuece mate o satinada: el aspecto brillante requiere esmalte, engobe vitrificable o bruñido.</li>
+          <li>Color medido con fotografía y carta gris. Los ΔE son comparativos dentro de tu propio sistema de fotos, no mediciones instrumentales.</li>
+        </ul>
+        <div class="msg warn"><span><b>Requiere validación experimental:</b> todas las proporciones sugeridas, la receta base del catálogo, la curva de cocción, los límites de uso con tu pasta y el comportamiento de pigmentos comerciales con tu cono y atmósfera.</span></div>
+        <button class="btn pri" id="btnCfgSave">Guardar supuestos</button>
+      </div>
+      <div class="card">
+        <h2>Flujo de iteración</h2>
+        <ol class="steps">
+          <li><b>Objetivo.</b> Elige el color en la paleta, ajusta tono, saturación y brillo, y define brillo, textura y acabado.</li>
+          <li><b>Propuesta.</b> Revisa las opciones de partida y sus advertencias. Elige una y créala como fórmula <span class="badge b-SUG">SUG</span>.</li>
+          <li><b>Serie.</b> Crea la serie (por ejemplo ×0,5 a ×2) para cubrir el rango en una sola cocción.</li>
+          <li><b>Preparación.</b> Pesa con la tabla del lote, sigue el procedimiento y marca cada probeta con su código y una línea de 100 mm.</li>
+          <li><b>Cocción.</b> Registra curva, atmósfera, ubicación y conos testigo.</li>
+          <li><b>Medición.</b> Fotografía con carta gris, mide el color, la absorción y la contracción, y anota defectos.</li>
+          <li><b>Comparación.</b> Lee el ΔE y las diferencias de claridad, tinte y saturación.</li>
+          <li><b>Ajuste.</b> Crea la versión ajustada (queda enlazada a la anterior) y vuelve al paso 4.</li>
+          <li><b>Validación.</b> Cuando tres cocciones independientes queden dentro de la tolerancia y sin defectos, la app propone marcarla <span class="badge b-COMP">COMP</span>.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Cómo medir bien el color con foto</h3>
+      <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:4px">
+        <li>Luz difusa de día o lámpara de alto IRC (≥ 90), siempre la misma; sin flash.</li>
+        <li>Incluye una carta gris neutra al 18 % en cada foto. En la app, toca primero la carta (modo "marcar carta gris") y luego la probeta: la app corrige el balance de blancos.</li>
+        <li>Mide en una zona plana sin reflejos. Con superficies moteadas, la app promedia un área.</li>
+        <li>Para resultados instrumentales, usa un colorímetro y escribe L*a*b* a mano.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Datos que mejorarán las recomendaciones</h3>
+      <ul class="small" style="margin:0;padding-left:18px;display:grid;gap:4px">
+        <li>Ficha técnica de tu pasta: marca, cono, absorción y contracción declaradas, composición en óxidos.</li>
+        <li>Lista de materias primas disponibles con su proveedor y FDS.</li>
+        <li>Tablas del fabricante de cada pigmento: temperatura máxima, uso en pasta, atmósfera e incompatibilidades.</li>
+        <li>Tus primeros resultados comprobados, que pasan a ser la mejor referencia.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+<div id="toastHost"></div>
+
+<script>
+/* ================== Datos de referencia ================== */
+const CONOS=[{c:'5',t:1196},{c:'6',t:1222},{c:'7',t:1240},{c:'8',t:1263},{c:'9',t:1280},{c:'10',t:1305}];
+// riesgo: nivel alto/medio/bajo; tMax = cono máximo orientativo; atm: 'ambas' | 'ox' (solo oxidación)
+const MAT0=[
+ {id:'pasta_com',n:'Pasta de gres clara comercial cono 6',tipo:'pasta',f:'Base lista para colorear. Usa la ficha del fabricante.',rng:[100,100],max:100,atm:'ambas',tMax:'7',haz:'sil',disp:true},
+ {id:'caolin',n:'Caolín',tipo:'arcilla',f:'Alúmina y blancura; refractario.',rng:[15,35],max:50,atm:'ambas',tMax:'10',haz:'sil',disp:true},
+ {id:'ballclay',n:'Arcilla de bola (ball clay)',tipo:'arcilla',f:'Plasticidad y resistencia en crudo.',rng:[15,35],max:45,atm:'ambas',tMax:'10',haz:'sil',disp:true},
+ {id:'nefelina',n:'Nefelina sienita',tipo:'fundente',f:'Fundente sódico-potásico para cono 6.',rng:[15,30],max:35,atm:'ambas',tMax:'10',haz:'sil2',disp:true},
+ {id:'feldK',n:'Feldespato potásico',tipo:'fundente',f:'Fundente; vitrificación a mayor temperatura que la nefelina.',rng:[15,30],max:35,atm:'ambas',tMax:'10',haz:'sil',disp:false},
+ {id:'silice',n:'Sílice (cuarzo) 200–325 mallas',tipo:'sílice',f:'Esqueleto, controla dilatación y ajuste del esmalte.',rng:[15,25],max:30,atm:'ambas',tMax:'10',haz:'sil',disp:true},
+ {id:'bentonita',n:'Bentonita',tipo:'arcilla',f:'Plasticidad en pastas claras.',rng:[1,3],max:4,atm:'ambas',tMax:'10',haz:'sil',disp:false},
+ {id:'fe2o3',n:'Óxido de hierro rojo (Fe₂O₃)',tipo:'óxido',f:'Crema (0,5–2 %), ocre a café (2–5 %), café rojizo a oscuro (5–8 %). En reducción: más gris y oscuro, y más fundente.',rng:[0.5,8],max:10,atm:'ambas',tMax:'10',haz:'fe',col:true,disp:true},
+ {id:'mno2',n:'Dióxido de manganeso (MnO₂)',tipo:'óxido',f:'Café a pardo violáceo; con hierro, chocolate a negro. Sobre ~4 % riesgo de hinchamiento y ampollas.',rng:[1,4],max:5,atm:'ambas',tMax:'10',haz:'mn',col:true,disp:true},
+ {id:'coco3',n:'Carbonato de cobalto',tipo:'óxido',f:'Azul muy intenso; en pasta tiende a azul grisáceo. Muy pequeñas cantidades.',rng:[0.1,1.5],max:2,atm:'ambas',tMax:'10',haz:'co',col:true,disp:true},
+ {id:'cr2o3',n:'Óxido de cromo (Cr₂O₃)',tipo:'óxido',f:'Verde oliva opaco. Con zinc vira a café; con estaño a rosado. Refractario.',rng:[0.5,2],max:3,atm:'ambas',tMax:'10',haz:'cr',col:true,disp:true},
+ {id:'rutilo',n:'Rutilo',tipo:'óxido',f:'Crema amarillento a tostado, variegado.',rng:[1,6],max:8,atm:'ambas',tMax:'10',haz:'ti',col:true,disp:true},
+ {id:'ilmenita',n:'Ilmenita granular',tipo:'texturizante',f:'Motas oscuras.',rng:[0.25,2],max:3,atm:'ambas',tMax:'10',haz:'ti',col:true,disp:true},
+ {id:'mngran',n:'Manganeso granular',tipo:'texturizante',f:'Motas café oscuro a negras.',rng:[0.1,1],max:1.5,atm:'ambas',tMax:'10',haz:'mn',col:true,disp:false},
+ {id:'zircon',n:'Silicato de circonio (zircón)',tipo:'opacificante',f:'Aclara y blanquea la pasta.',rng:[2,8],max:10,atm:'ambas',tMax:'10',haz:'zr',disp:true},
+ {id:'chamota_f',n:'Chamota fina (malla 60–80)',tipo:'texturizante',f:'Textura granulada suave; reduce contracción.',rng:[5,15],max:25,atm:'ambas',tMax:'10',haz:'sil',disp:true},
+ {id:'chamota_m',n:'Chamota media (malla 30–48)',tipo:'texturizante',f:'Textura rugosa visible.',rng:[5,20],max:25,atm:'ambas',tMax:'10',haz:'sil',disp:true},
+ {id:'st_negro',n:'Pigmento comercial negro (Co-Fe-Cr)',tipo:'pigmento',f:'Gris a negro según dosis.',rng:[2,10],max:15,atm:'ambas',tMax:'10',haz:'st',col:true,disp:false},
+ {id:'st_azul',n:'Pigmento comercial azul (Co-Si / Co-Al)',tipo:'pigmento',f:'Azules limpios, pastel a intensos.',rng:[2,10],max:15,atm:'ambas',tMax:'10',haz:'st',col:true,disp:false},
+ {id:'st_verde',n:'Pigmento comercial verde (Cr / Co-Cr)',tipo:'pigmento',f:'Verdes más limpios que el óxido de cromo.',rng:[3,10],max:15,atm:'ambas',tMax:'10',haz:'st',col:true,disp:false},
+ {id:'st_amar',n:'Pigmento comercial amarillo (Zr-Pr)',tipo:'pigmento',f:'Amarillo limón estable.',rng:[4,12],max:15,atm:'ambas',tMax:'10',haz:'st',col:true,disp:false},
+ {id:'st_rosa',n:'Pigmento comercial rosado (Cr-Sn)',tipo:'pigmento',f:'Rosados; requiere calcio, sin zinc; pierde color en reducción.',rng:[5,12],max:15,atm:'ox',tMax:'8',haz:'st',col:true,disp:false},
+ {id:'st_rojo',n:'Pigmento encapsulado rojo/naranja (Zr-Cd-Se)',tipo:'pigmento',f:'Rojos y naranjos de inclusión; temperatura y atmósfera limitadas según fabricante.',rng:[6,15],max:15,atm:'ox',tMax:'6',haz:'cd',col:true,disp:false},
+ {id:'st_cafe',n:'Pigmento comercial café (Fe-Cr-Zn)',tipo:'pigmento',f:'Cafés estables y repetibles.',rng:[3,10],max:15,atm:'ambas',tMax:'10',haz:'st',col:true,disp:false},
+ {id:'cuco3',n:'Carbonato de cobre',tipo:'óxido',f:'No recomendado en pasta: funde, volatiliza y da resultados poco repetibles. Usar en esmalte.',rng:[0,0],max:1,atm:'ambas',tMax:'10',haz:'cu',col:true,disp:false,noSug:true},
+ {id:'nio',n:'Óxido de níquel',tipo:'óxido',f:'Grises y cafés apagados. No se sugiere por su toxicidad.',rng:[0,0],max:1,atm:'ambas',tMax:'10',haz:'ni',col:true,disp:false,noSug:true},
+];
+const HAZ={
+ sil:{nv:'alto',t:'Sílice cristalina respirable',d:'El polvo de arcillas, cuarzo, feldespato y chamota contiene sílice cristalina: silicosis y cáncer de pulmón (IARC grupo 1). Trabajo en húmedo, respirador P100/FFP3 al manipular polvo seco, limpieza húmeda o HEPA.'},
+ sil2:{nv:'medio',t:'Polvo mineral (puede contener sílice)',d:'Menor contenido de sílice libre que el feldespato, pero igual polvo respirable. Mismo manejo que la sílice.'},
+ fe:{nv:'bajo',t:'Óxido de hierro',d:'Baja toxicidad; polvo molesto que mancha. Mascarilla P2/FFP2 al pesar, guantes.'},
+ mn:{nv:'alto',t:'Manganeso',d:'Tóxico por inhalación prolongada (efectos neurológicos). En cocción libera humos de manganeso: ventilar el horno al exterior y no permanecer en la sala. Guantes de nitrilo y P100/FFP3.'},
+ co:{nv:'alto',t:'Compuestos de cobalto',d:'Nocivo por ingestión; puede causar sensibilización respiratoria y cutánea; algunos compuestos de cobalto están clasificados como posibles o probables cancerígenos (verifica la FDS). Guantes de nitrilo y P100/FFP3.'},
+ cr:{nv:'medio',t:'Óxido de cromo (III)',d:'Baja toxicidad aguda; evitar inhalación. En ciertas condiciones de cocción oxidante y alcalina puede formarse cromo hexavalente: no usar en superficies para alimentos sin prueba de lixiviación. Guantes y P2/P3.'},
+ ti:{nv:'medio',t:'Rutilo / ilmenita (titanio)',d:'Polvo respirable; el TiO₂ en polvo está clasificado en la UE como sospechoso de cáncer por inhalación. La ilmenita puede traer sílice. Mascarilla P2/FFP2.'},
+ zr:{nv:'medio',t:'Silicato de circonio',d:'Polvo respirable; puede contener trazas de radiactividad natural según origen (consultar FDS). Mascarilla P2/P3, guardar cerrado.'},
+ st:{nv:'medio',t:'Pigmento comercial (mezcla calcinada)',d:'Según su FDS: puede contener cobalto, cromo, níquel, zinc o praseodimio. Guantes, P100/FFP3, no ingerir. La FDS del producto prevalece.'},
+ cd:{nv:'alto',t:'Pigmento encapsulado con cadmio y selenio',d:'Cadmio y selenio son tóxicos; cadmio cancerígeno (IARC grupo 1). Manipular con guantes y P100/FFP3; no usar en superficies para alimentos sin prueba de lixiviación certificada; respetar temperatura máxima para no romper el encapsulado.'},
+ cu:{nv:'medio',t:'Carbonato de cobre',d:'Nocivo por ingestión; muy tóxico para la vida acuática; volatiliza en el horno. Ventilar.'},
+ ni:{nv:'alto',t:'Óxido de níquel',d:'Compuestos de níquel: cancerígenos para el ser humano (IARC grupo 1) y sensibilizantes cutáneos. Evitar; si se usa, control estricto de polvo.'},
+};
+const PALETA=[
+ ['Blanco hueso','#EDE8DC'],['Crema','#E4D5B4'],['Arena','#CDB48C'],['Ocre','#B98A45'],['Tostado','#A06B3C'],['Terracota','#A4583A'],
+ ['Café','#7A4E33'],['Chocolate','#4E3326'],['Gris perla','#C9C8C2'],['Gris piedra','#8E8C86'],['Gris carbón','#4A4A48'],['Negro','#262423'],
+ ['Azul cobalto','#2F4C8E'],['Azul grisáceo','#6D7F97'],['Celeste pastel','#A9BFD6'],['Turquesa apagado','#5E9690'],['Celadón','#9DB59A'],['Verde oliva','#6B6E3E'],
+ ['Verde cromo','#4E6E45'],['Amarillo','#E2C861'],['Naranja','#D27A3A'],['Rojo','#A8352C'],['Rosado','#D9A3A5'],['Lavanda','#9C8DB0'],
+];
+
+/* ================== Utilidades de color ================== */
+function hsv2rgb(h,s,v){s/=100;v/=100;const f=n=>{const k=(n+h/60)%6;return v-v*s*Math.max(0,Math.min(k,4-k,1));};return [f(5),f(3),f(1)].map(x=>Math.round(x*255));}
+function rgb2hsv(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360;}return [Math.round(h),Math.round(mx?d/mx*100:0),Math.round(mx*100)];}
+function hex2rgb(h){h=(h||'').replace('#','');if(!/^[0-9a-f]{6}$/i.test(h))return null;return [0,2,4].map(i=>parseInt(h.substr(i,2),16));}
+function rgb2hex(r,g,b){return '#'+[r,g,b].map(x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,'0')).join('').toUpperCase();}
+function rgb2lab(r,g,b){const l=c=>{c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);};const R=l(r),G=l(g),B=l(b);
+ let X=(R*0.4124564+G*0.3575761+B*0.1804375)/0.95047,Y=(R*0.2126729+G*0.7151522+B*0.0721750),Z=(R*0.0193339+G*0.1191920+B*0.9503041)/1.08883;
+ const f=t=>t>0.008856?Math.cbrt(t):(7.787*t+16/116);X=f(X);Y=f(Y);Z=f(Z);return [116*Y-16,500*(X-Y),200*(Y-Z)];}
+function lab2rgb(L,a,b){let y=(L+16)/116,x=a/500+y,z=y-b/200;const f=t=>t*t*t>0.008856?t*t*t:(t-16/116)/7.787;x=f(x)*0.95047;y=f(y);z=f(z)*1.08883;
+ let R=x*3.2404542+y*-1.5371385+z*-0.4985314,G=x*-0.9692660+y*1.8760108+z*0.0415560,B=x*0.0556434+y*-0.2040259+z*1.0572252;
+ const g=c=>c<=0.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-0.055;return [R,G,B].map(c=>Math.max(0,Math.min(255,Math.round(g(c)*255))));}
+function lch(L,a,b){const C=Math.hypot(a,b);let h=Math.atan2(b,a)*180/Math.PI;if(h<0)h+=360;return [L,C,h];}
+function dE00(l1,l2){const [L1,a1,b1]=l1,[L2,a2,b2]=l2,rad=Math.PI/180;
+ const C1=Math.hypot(a1,b1),C2=Math.hypot(a2,b2),Cm=(C1+C2)/2,G=0.5*(1-Math.sqrt(Math.pow(Cm,7)/(Math.pow(Cm,7)+Math.pow(25,7))));
+ const a1p=(1+G)*a1,a2p=(1+G)*a2,C1p=Math.hypot(a1p,b1),C2p=Math.hypot(a2p,b2);
+ const hp=(x,y)=>{if(x===0&&y===0)return 0;let h=Math.atan2(y,x)/rad;return h<0?h+360:h;};const h1p=hp(a1p,b1),h2p=hp(a2p,b2);
+ const dLp=L2-L1,dCp=C2p-C1p;let dhp=0;if(C1p*C2p!==0){dhp=h2p-h1p;if(dhp>180)dhp-=360;else if(dhp<-180)dhp+=360;}
+ const dHp=2*Math.sqrt(C1p*C2p)*Math.sin(dhp*rad/2);const Lpm=(L1+L2)/2,Cpm=(C1p+C2p)/2;let hpm=h1p+h2p;
+ if(C1p*C2p!==0){if(Math.abs(h1p-h2p)>180)hpm=(h1p+h2p<360)?(h1p+h2p+360)/2:(h1p+h2p-360)/2;else hpm=(h1p+h2p)/2;}
+ const T=1-0.17*Math.cos((hpm-30)*rad)+0.24*Math.cos(2*hpm*rad)+0.32*Math.cos((3*hpm+6)*rad)-0.20*Math.cos((4*hpm-63)*rad);
+ const dth=30*Math.exp(-Math.pow((hpm-275)/25,2)),Rc=2*Math.sqrt(Math.pow(Cpm,7)/(Math.pow(Cpm,7)+Math.pow(25,7)));
+ const SL=1+0.015*Math.pow(Lpm-50,2)/Math.sqrt(20+Math.pow(Lpm-50,2)),SC=1+0.045*Cpm,SH=1+0.015*Cpm*T,RT=-Math.sin(2*dth*rad)*Rc;
+ return Math.sqrt(Math.pow(dLp/SL,2)+Math.pow(dCp/SC,2)+Math.pow(dHp/SH,2)+RT*(dCp/SC)*(dHp/SH));}
+function familia(lab){const [L,C,h]=lch(...lab);if(C<9){return L>82?'blancos':L>40?'grises':'negros';}
+ if(h<30||h>=345)return L>68?'rosados':'rojos';if(h<75)return L>72?'cremas':(C>40&&L>45?'naranjos':'cafés');if(h<105)return L>72?'amarillos':'cafés';
+ if(h<180)return 'verdes';if(h<220)return 'turquesas';if(h<300)return 'azules';return 'violetas';}
+
+/* ================== Estado y almacenamiento ================== */
+const DBN='gresColor',STN='kv';let DB={};
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBN,1);r.onupgradeneeded=()=>r.result.createObjectStore(STN);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function loadDB(){try{const d=await idb();return await new Promise(res=>{const q=d.transaction(STN).objectStore(STN).get('db');q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null);});}catch(e){return null;}}
+let saveT=null;function save(){clearTimeout(saveT);saveT=setTimeout(async()=>{try{const d=await idb();d.transaction(STN,'readwrite').objectStore(STN).put(DB,'db');}catch(e){toast('No se pudo guardar en este navegador. Descarga un respaldo JSON.');}},250);}
+const uid=p=>p+'-'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const hoy=()=>new Date().toISOString().slice(0,10);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const n1=x=>x==null||!isFinite(x)?'—':(+x).toLocaleString('es-CL',{maximumFractionDigits:1,minimumFractionDigits:1});
+const n2=x=>x==null||!isFinite(x)?'—':(+x).toLocaleString('es-CL',{maximumFractionDigits:2,minimumFractionDigits:2});
+const nf=(x,d=2)=>x==null||!isFinite(x)?'—':(+x).toLocaleString('es-CL',{maximumFractionDigits:d});
+function toast(t){const h=$('#toastHost');h.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(toast.t);toast.t=setTimeout(()=>h.innerHTML='',2600);}
+const mat=id=>DB.materias.find(m=>m.id===id)||{id,n:id,tipo:'?',rng:[0,0],max:0,haz:'st'};
+const BADGE={REF:'referencia',SUG:'sugerencia',ENS:'en ensayo',COMP:'comprobada',DESC:'descartada'};
+const badge=(k,t)=>`<span class="badge b-${k}">${esc(t||BADGE[k]||k)}</span>`;
+
+function seed(){
+ const objId='obj-ej1',fId='f-ej1',cId='c-ej1';
+ const lab=rgb2lab(...hex2rgb('#7A4E33'));
+ return {v:1,cfg:{cono:'6',atm:'oxidación',horno:'eléctrico',base:'pasta_com'},
+  materias:MAT0.map(m=>({...m,nivel:'REF'})),
+  objetivos:[{id:objId,nombre:'CAFÉ TOSTADO MATE',hex:'#7A4E33',lab,brillo:'mate',textura:'lisa',acabado:'pasta vista',unif:'uniforme',tol:5,notas:'Objetivo de ejemplo.',fecha:hoy(),ej:true}],
+  formulas:[{id:fId,codigo:'G-001',nombre:'Café tostado — hierro y manganeso',objetivoId:objId,estado:'SUG',padre:'',tags:'cafe, ejemplo',
+   base:[{m:'pasta_com',p:100}],adds:[{m:'fe2o3',p:4},{m:'mno2',p:1}],notas:'Fórmula de ejemplo generada desde la propuesta A.',fecha:hoy(),ej:true}],
+  cocciones:[{id:cId,codigo:'K-001',fecha:hoy(),horno:'Eléctrico',cono:'6',conoReal:'6 doblado a las 4',tmax:1222,soak:10,atm:'oxidación',red:'',enf:'natural',ubic:'Repisa media',curva:'100 °C/h hasta 600 °C; 150 °C/h hasta 1100 °C; 60 °C/h hasta 1222 °C',notas:'Cocción de ejemplo.',ej:true}],
+  resultados:[{id:'r-ej1',formulaId:fId,coccionId:cId,fecha:hoy(),marca:'P3 ×1,0',foto:'',hex:'#8A5C40',lab:rgb2lab(...hex2rgb('#8A5C40')),brillo:'mate',tex:'lisa',vc:3,va:4,abs:1.8,con:11.5,ps:null,ph:null,l0:100,l1:88.5,def:[],notas:'Resultado de ejemplo: algo más claro que el objetivo.',ej:true}],
+  sel:{obj:objId,f:fId,c:cId,r:'r-ej1'}};
+}
+
+/* ================== Navegación ================== */
+function show(v){$$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));$$('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+ try{localStorage.setItem('gresTab',v);}catch(e){} if(R[v])R[v]();window.scrollTo({top:0});}
+$$('nav.tabs button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+const R={};
+
+function renderAssume(){const c=DB.cfg,t=(CONOS.find(x=>x.c===c.cono)||{}).t;
+ $('#assumeBar').innerHTML=`<span>⚑</span><span><b>Supuestos activos:</b> gres cono ${esc(c.cono)} (≈ ${t||'—'} °C), horno ${esc(c.horno)}, atmósfera ${esc(c.atm)}, pasta base «${esc(mat(c.base).n)}». Todo lo sugerido requiere validación experimental. <a href="#" id="lnkCfg" style="color:var(--accent)">Cambiar supuestos</a></span>`;
+ $('#lnkCfg').onclick=e=>{e.preventDefault();show('guia');};}
+function renderHdr(){const o=curObj();const h=$('#hdrTarget');h.querySelector('i').style.background=o?o.hex:'transparent';h.querySelector('span').textContent=o?`${o.nombre||'Sin nombre'} · ${o.hex} · ${o.brillo} · ${o.textura}`:'Sin objetivo';}
+
+/* ================== 1 · Objetivo ================== */
+let OBJ=null; // borrador en edición
+function curObj(){return DB.objetivos.find(o=>o.id===DB.sel.obj)||null;}
+function newObj(hex){return {id:'',nombre:'',hex:hex||'#A06B3C',lab:rgb2lab(...hex2rgb(hex||'#A06B3C')),brillo:'mate',textura:'lisa',acabado:'pasta vista',unif:'uniforme',tol:5,notas:'',fecha:hoy()};}
+function setObjHex(hex,fromSl){OBJ.hex=hex.toUpperCase();OBJ.lab=rgb2lab(...hex2rgb(hex));if(!fromSl){const [h,s,v]=rgb2hsv(...hex2rgb(hex));$('#sH').value=h;$('#sS').value=s;$('#sB').value=v;}paintObj();}
+function paintObj(){const o=OBJ,tile=$('#objTile');tile.style.background=o.hex;tile.className='big tex-'+o.textura+' gloss-'+o.brillo;tile.style.backgroundColor=o.hex;
+ $('#oH').textContent=$('#sH').value+'°';$('#oS').textContent=$('#sS').value+'%';$('#oB').textContent=$('#sB').value+'%';
+ $('#hexIn').value=o.hex;$('#colorIn').value=o.hex.toLowerCase();const [L,C,h]=lch(...o.lab);
+ $('#objKv').innerHTML=`<dt>L* a* b*</dt><dd>${n1(o.lab[0])} · ${n1(o.lab[1])} · ${n1(o.lab[2])}</dd><dt>Croma · tono</dt><dd>${n1(C)} · ${nf(h,0)}°</dd><dt>Familia</dt><dd>${familia(o.lab)}</dd><dt>Brillo · textura</dt><dd>${esc(o.brillo)} · ${esc(o.textura)}</dd>`;
+ $$('#palette .sw').forEach(b=>b.setAttribute('aria-pressed',b.dataset.hex===o.hex));
+ ['segBrillo','segTextura'].forEach(id=>{const k=$('#'+id).dataset.k;$$('#'+id+' button').forEach(b=>b.setAttribute('aria-pressed',b.textContent===o[k]));});
+ $('#objIdBadge').textContent=o.id?'guardado':'sin guardar';$('#objIdBadge').className='badge '+(o.id?'b-REF':'b-EJ');
+ const m=[];const c=DB.cfg;
+ if(o.brillo==='brillante'&&o.acabado==='pasta vista')m.push(['warn','<b>Brillo no alcanzable en pasta vista.</b> Una pasta de gres sin esmalte cuece mate o satinada. Para brillante: esmalte transparente, engobe vitrificable o bruñido.']);
+ if(o.brillo==='satinado'&&o.acabado==='pasta vista')m.push(['info','Satinado en pasta vista: depende de la vitrificación de la pasta y puede requerir bruñido o terra sigillata.']);
+ if(o.acabado==='esmalte transparente')m.push(['info','Con esmalte transparente el color se ve más profundo y saturado que en la pasta vista: compara siempre la probeta esmaltada.']);
+ const [L2,C2,h2]=lch(...o.lab);const fam=familia(o.lab);
+ if((fam==='rojos'||fam==='naranjos')&&C2>35)m.push(['warn','<b>Rojos y naranjos saturados</b> solo se logran con pigmentos encapsulados (cadmio-selenio), con temperatura máxima limitada y solo en oxidación. Revisa la ficha del fabricante.']);
+ if(fam==='rosados')m.push(['warn','<b>Rosados</b> con pigmento cromo-estaño: requieren calcio, sin zinc, y se pierden en reducción.']);
+ if(L2>88&&C2<6)m.push(['info','Blancos muy claros: usa una pasta base blanca (tipo porcelánica) y zircón; el hierro natural de las arcillas tiñe hacia crema.']);
+ if(c.atm==='reducción'&&['cafés','cremas','naranjos'].includes(fam))m.push(['info','En reducción el hierro vira a gris y café más oscuro, con posibles motas. Ajusta la expectativa del tono.']);
+ $('#objMsgs').innerHTML=m.map(([k,t])=>`<div class="msg ${k}">${t}</div>`).join('');
+ renderHdr();}
+function bindObjForm(){const o=OBJ;$('#objNombre').value=o.nombre;$('#objAcabado').value=o.acabado;$('#objUnif').value=o.unif;$('#objTol').value=o.tol;$('#objNotas').value=o.notas;const [h,s,v]=rgb2hsv(...hex2rgb(o.hex));$('#sH').value=h;$('#sS').value=s;$('#sB').value=v;paintObj();}
+R.objetivo=()=>{if(!OBJ){const c=curObj();OBJ=c?JSON.parse(JSON.stringify(c)):newObj();}bindObjForm();};
+$('#palette').innerHTML=PALETA.map(([n,h])=>`<button class="sw" data-hex="${h}" aria-pressed="false" title="${n} ${h}"><i style="background:${h}"></i><span>${n}</span></button>`).join('');
+$$('#palette .sw').forEach(b=>b.onclick=()=>{setObjHex(b.dataset.hex);if(!OBJ.nombre){OBJ.nombre=b.querySelector('span').textContent.toUpperCase();$('#objNombre').value=OBJ.nombre;}});
+['sH','sS','sB'].forEach(id=>$('#'+id).oninput=()=>setObjHex(rgb2hex(...hsv2rgb(+$('#sH').value,+$('#sS').value,+$('#sB').value)),true));
+$('#hexIn').onchange=e=>{let v=e.target.value.trim();if(v[0]!=='#')v='#'+v;if(hex2rgb(v))setObjHex(v);else toast('HEX inválido: usa 6 dígitos, por ejemplo #7A4E33.');};
+$('#colorIn').oninput=e=>setObjHex(e.target.value);
+['segBrillo','segTextura'].forEach(id=>$$('#'+id+' button').forEach(b=>b.onclick=()=>{OBJ[$('#'+id).dataset.k]=b.textContent;paintObj();}));
+$('#objAcabado').onchange=e=>{OBJ.acabado=e.target.value;paintObj();};$('#objUnif').onchange=e=>OBJ.unif=e.target.value;
+$('#objNombre').oninput=e=>OBJ.nombre=e.target.value.toUpperCase();$('#objTol').oninput=e=>OBJ.tol=+e.target.value||5;$('#objNotas').oninput=e=>OBJ.notas=e.target.value;
+$('#btnObjSave').onclick=()=>{if(!OBJ.id){OBJ.id=uid('obj');DB.objetivos.push(OBJ);}else{const i=DB.objetivos.findIndex(x=>x.id===OBJ.id);DB.objetivos[i]=OBJ;}OBJ=JSON.parse(JSON.stringify(OBJ));DB.sel.obj=OBJ.id;save();paintObj();toast('Objetivo guardado');};
+$('#btnObjNew').onclick=()=>{OBJ=newObj(OBJ?OBJ.hex:null);bindObjForm();};
+$('#btnGoProp').onclick=()=>{$('#btnObjSave').click();show('propuesta');};
+
+/* ================== 2 · Propuestas (motor de reglas) ================== */
+function proponer(o,cfg){
+ const [L,C,h]=lch(...o.lab),fam=familia(o.lab),red=cfg.atm==='reducción',base=cfg.base;
+ const k=(a,b,t)=>a+(b-a)*Math.max(0,Math.min(1,t)); // interpolación
+ const dark=Math.max(0,Math.min(1,(80-L)/55)); // 0 claro → 1 oscuro
+ const ops=[];const add=(nombre,adds,notas,dif)=>ops.push({nombre,adds:adds.filter(a=>a.p>0).map(a=>({m:a.m,p:Math.round(a.p*100)/100})),notas,dif});
+ if(fam==='blancos'){add('A · Pasta clara con zircón',[{m:'zircon',p:k(2,8,(L-82)/12)}],['Elegir la pasta base más blanca disponible (bajo hierro).','Si queda crema, subir zircón o cambiar a base porcelánica.'],'media');}
+ else if(fam==='cremas'||fam==='amarillos'&&C<30){add('A · Hierro bajo',[{m:'fe2o3',p:k(0.5,2,(80-L)/15+C/60)}],['Tono crema a arena. Cambios pequeños de hierro producen cambios visibles.'],'baja');
+  add('B · Rutilo',[{m:'rutilo',p:k(2,5,C/30)},{m:'fe2o3',p:0.5}],['Crema amarillento con leve variegado.'],'baja');}
+ else if(fam==='amarillos'){add('A · Pigmento amarillo Zr-Pr',[{m:'st_amar',p:k(5,12,C/60)}],['Amarillo limpio y estable; la dosis depende del pigmento.','La pasta base debe ser clara.'],'media');
+  add('B · Rutilo (amarillo apagado)',[{m:'rutilo',p:6}],['No alcanza amarillos saturados: da crema-amarillo.'],'baja');}
+ else if(fam==='cafés'||fam==='naranjos'&&C<=40){const fe=k(2,8,dark+0.15),mn=L<45?k(0,3,(45-L)/20):0;
+  add('A · Óxido de hierro'+(mn?' + manganeso':''),[{m:'fe2o3',p:fe},{m:'mno2',p:mn}],['Café rojizo a oscuro según dosis.'+(red?' En reducción quedará más gris y oscuro.':''),mn?'El manganeso oscurece y agrega matiz violáceo; cuidar hinchamiento.':'Para oscurecer sin pasar de 8 % de hierro, agregar 1–2 % de MnO₂.'],'baja');
+  add('B · Pigmento café comercial',[{m:'st_cafe',p:k(4,10,dark)}],['Más repetible entre lotes que los óxidos crudos.'],'baja');}
+ else if(fam==='naranjos'||fam==='rojos'){if(red)add('A · Rojo de hierro (reducción no favorece rojos)',[{m:'fe2o3',p:6}],['En reducción el hierro no da rojo: espera café rojizo a oscuro.'],'alta');
+  else{add('A · Pigmento encapsulado (Zr-Cd-Se)',[{m:'st_rojo',p:k(8,15,C/60)}],['Única vía para rojo o naranjo saturado.','Verificar temperatura máxima del fabricante (frecuentemente cono 6 o menos) y no usar en reducción.','Contiene cadmio: manejo y uso alimentario según FDS.'],'alta');
+   add('B · Terracota con hierro',[{m:'fe2o3',p:k(4,7,dark)}],['Rojo ladrillo o terracota apagado; nunca rojo saturado.'],'baja');}}
+ else if(fam==='rosados'){add('A · Pigmento rosado Cr-Sn',[{m:'st_rosa',p:k(5,12,C/40)}],['Necesita calcio en la pasta y ausencia de zinc.','Solo oxidación.'+(red?' Con tu atmósfera de reducción no es recomendable.':'')],red?'alta':'media');
+  add('B · Hierro muy bajo (rosado terroso)',[{m:'fe2o3',p:1}],['Rosado-beige apagado, no rosado limpio.'],'baja');}
+ else if(fam==='verdes'){add('A · Óxido de cromo',[{m:'cr2o3',p:k(0.5,2,dark+C/80)}],['Verde oliva opaco. Evitar materias con zinc (vira a café).'],'media');
+  add('B · Pigmento verde comercial',[{m:'st_verde',p:k(3,10,C/40)}],['Verdes más limpios.'],'media');
+  if(L<60)add('C · Hierro + cobalto (verde grisáceo)',[{m:'fe2o3',p:2},{m:'coco3',p:0.25}],['Verdes grisáceos apagados; útil para celadón opaco en pasta.'],'media');}
+ else if(fam==='turquesas'){add('A · Cobalto + cromo',[{m:'coco3',p:k(0.2,0.6,dark)},{m:'cr2o3',p:k(0.4,1,dark)}],['Turquesa apagado; probar la proporción Co:Cr en serie triaxial.'],'media');
+  add('B · Pigmento azul + verde',[{m:'st_azul',p:k(2,6,C/40)},{m:'st_verde',p:k(2,5,C/40)}],['Mezcla de pigmentos comerciales; más limpia.'],'media');}
+ else if(fam==='azules'){add('A · Carbonato de cobalto',[{m:'coco3',p:k(0.15,1.2,dark+C/80)}],['Azul intenso; en pasta tiende a azul grisáceo. Variaciones de 0,1 % son visibles.'],'media');
+  add('B · Pigmento azul comercial',[{m:'st_azul',p:k(2,10,C/50+dark/2)}],['Para azules pastel o limpios.'],'baja');
+  if(C<25)add('C · Cobalto + hierro (azul grisáceo)',[{m:'coco3',p:0.25},{m:'fe2o3',p:1}],['Apaga el azul hacia gris pizarra.'],'media');}
+ else if(fam==='violetas'){add('A · Manganeso + cobalto',[{m:'mno2',p:k(2,4,dark)},{m:'coco3',p:0.2}],['Pardo violáceo; el violeta limpio no es alcanzable con óxidos en pasta.'],'alta');}
+ else if(fam==='grises'){add('A · Pigmento negro diluido',[{m:'st_negro',p:k(0.5,4,(85-L)/45)}],['Gris neutro, controlable con la dosis.'],'baja');
+  add('B · Hierro + cobalto + manganeso',[{m:'fe2o3',p:k(0.5,2,dark)},{m:'coco3',p:k(0.05,0.2,dark)},{m:'mno2',p:k(0.5,1.5,dark)}],['Gris cálido o frío según el balance; ajustar con serie.'],'media');}
+ else if(fam==='negros'){add('A · Pigmento negro',[{m:'st_negro',p:k(6,10,(40-L)/25)}],['Negro repetible.'],'baja');
+  add('B · Hierro + manganeso + cobalto',[{m:'fe2o3',p:4},{m:'mno2',p:3},{m:'coco3',p:1}],['Negro con óxidos crudos. Total de colorantes alto: vigilar hinchamiento y vitrificación excesiva.'],'media');}
+ // textura
+ ops.forEach(op=>{op.base=base;
+  if(o.textura==='granulada')op.adds.push({m:'chamota_f',p:10});
+  if(o.textura==='rugosa')op.adds.push({m:'chamota_m',p:12});
+  if(o.textura==='moteada')op.adds.push({m:L<55?'mngran':'ilmenita',p:L<55?0.5:1});
+  if(o.brillo==='brillante'&&o.acabado==='pasta vista')op.notas.push('Para el brillo: aplicar esmalte transparente compatible con cono '+cfg.cono+'.');});
+ return ops;}
+let PROPS=[];
+R.propuesta=()=>{const o=curObj()||OBJ;if(!o){$('#propList').innerHTML='<p>Guarda primero un objetivo.</p>';return;}
+ PROPS=proponer(o,DB.cfg);const [L,C,h]=lch(...o.lab);
+ $('#propLab').textContent=`Objetivo ${o.nombre||''} ${o.hex} · L* ${n1(L)} · C* ${n1(C)} · h ${nf(h,0)}° · familia ${familia(o.lab)} · cono ${DB.cfg.cono}, ${DB.cfg.atm}`;
+ $('#propList').innerHTML=PROPS.map((p,i)=>{const nodisp=p.adds.filter(a=>!mat(a.m).disp);
+  return `<div class="option"><div class="card-h"><h3>${esc(p.nombre)}</h3>${badge('SUG')}</div>
+  <div class="row small"><span class="muted">Dificultad para acercarse:</span><b>${p.dif}</b></div>
+  <div class="tbl"><table><tbody><tr><td>${esc(mat(p.base).n)}</td><td class="num">100</td></tr>${p.adds.map(a=>`<tr><td>+ ${esc(mat(a.m).n)}${mat(a.m).disp?'':' <span class="badge b-EJ">no disponible</span>'}</td><td class="num">${nf(a.p)}</td></tr>`).join('')}</tbody></table></div>
+  <ul>${p.notas.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+  ${nodisp.length?`<div class="msg warn"><span>Falta en tu taller: ${nodisp.map(a=>esc(mat(a.m).n)).join(', ')}.</span></div>`:''}
+  <button class="btn pri sm" data-p="${i}">Crear fórmula desde esta propuesta</button></div>`;}).join('')||'<p>No hay reglas para este color. Prueba ajustar el objetivo.</p>';
+ $$('#propList [data-p]').forEach(b=>b.onclick=()=>{const p=PROPS[+b.dataset.p];const f=nuevaFormula({nombre:(o.nombre||'Objetivo')+' — '+p.nombre.replace(/^[A-C] · /,''),objetivoId:o.id,estado:'SUG',base:[{m:p.base,p:100}],adds:p.adds.map(a=>({...a})),notas:p.notas.join(' ')});DB.sel.f=f.id;save();toast('Fórmula '+f.codigo+' creada');show('formula');});};
+
+/* ================== 3 · Fórmula y lote ================== */
+function sigCodigo(){const n=DB.formulas.map(f=>parseInt((f.codigo||'').replace(/\D/g,''))||0);return 'G-'+String((n.length?Math.max(...n):0)+1).padStart(3,'0');}
+function nuevaFormula(x){const f={id:uid('f'),codigo:sigCodigo(),nombre:'',objetivoId:DB.sel.obj||'',estado:'SUG',padre:'',tags:'',base:[{m:DB.cfg.base,p:100}],adds:[],notas:'',fecha:hoy(),...x};DB.formulas.push(f);return f;}
+const curF=()=>DB.formulas.find(f=>f.id===DB.sel.f)||null;
+let LOTE=500;
+function matOptions(sel,filtro){return DB.materias.filter(filtro||(()=>true)).map(m=>`<option value="${m.id}"${m.id===sel?' selected':''}>${esc(m.n)}${m.disp?'':' (no disp.)'}</option>`).join('');}
+function chequeos(f){const out=[];const c=DB.cfg,red=c.atm==='reducción',ci=CONOS.findIndex(x=>x.c===c.cono);
+ const sb=f.base.reduce((s,x)=>s+(+x.p||0),0);
+ f.adds.forEach(a=>{const m=mat(a.m);if(a.p>m.max)out.push(['bad',`<b>${esc(m.n)}: ${nf(a.p)} %</b> supera el máximo de referencia (${nf(m.max)} %).`]);
+  else if(m.rng&&a.p>m.rng[1]&&m.rng[1]>0)out.push(['warn',`<b>${esc(m.n)}</b> sobre el rango típico (${nf(m.rng[0])}–${nf(m.rng[1])} %).`]);
+  if(m.atm==='ox'&&red)out.push(['bad',`<b>${esc(m.n)}</b> no es apto para reducción.`]);
+  if(CONOS.findIndex(x=>x.c===m.tMax)<ci&&m.tMax)out.push(['bad',`<b>${esc(m.n)}</b>: temperatura máxima orientativa cono ${m.tMax}, menor que tu cocción (cono ${c.cono}). Verifica la ficha del fabricante.`]);
+  if(m.noSug)out.push(['warn',`<b>${esc(m.n)}</b>: ${esc(m.f)}`]);});
+ const has=id=>f.adds.some(a=>a.m===id&&a.p>0)||f.base.some(a=>a.m===id&&a.p>0),pp=id=>f.adds.filter(a=>a.m===id).reduce((s,a)=>s+(+a.p||0),0);
+ const ox=['fe2o3','mno2','coco3','cr2o3','cuco3','nio','rutilo'].reduce((s,id)=>s+pp(id),0);
+ if(ox>10)out.push(['warn',`<b>Óxidos colorantes en total ${nf(ox)} %.</b> Sobre ~10 % aumenta la fundencia: riesgo de deformación, hinchamiento y menor absorción. Revisa en la probeta.`]);
+ if(has('mno2')&&pp('mno2')>3)out.push(['warn','<b>Manganeso sobre 3 %:</b> riesgo de hinchamiento y ampollas, sobre todo con mantenciones largas.']);
+ if(red&&pp('fe2o3')>5)out.push(['warn','<b>Hierro alto en reducción:</b> actúa como fundente fuerte; riesgo de hinchamiento y corazón negro. Bizcocho bien oxidado antes de reducir.']);
+ if(has('cr2o3')&&(has('st_rosa')))out.push(['info','Cromo junto a pigmento cromo-estaño: el cromo libre puede virar el rosado a café-grisáceo.']);
+ if(has('st_rosa'))out.push(['info','Pigmento rosado: confirma que la pasta tenga calcio y no contenga zinc (consulta la ficha).']);
+ if(has('cr2o3'))out.push(['info','Cromo: evitar zinc en la pasta o en el esmalte superpuesto (vira a café).']);
+ if(has('cuco3'))out.push(['warn','Cobre en pasta: funde, volatiliza y contamina otras piezas del horno.']);
+ // seguridad agregada
+ const hz=new Set();[...f.base,...f.adds].forEach(a=>{if(a.p>0)hz.add(mat(a.m).haz);});
+ [...hz].forEach(k=>{const z=HAZ[k];if(z&&z.nv==='alto')out.push(['bad',`<b>Seguridad — ${esc(z.t)}:</b> ${esc(z.d)}`]);});
+ return {out,sb};}
+function renderF(){const f=curF();
+ $('#fPick').innerHTML=DB.formulas.map(x=>`<option value="${x.id}"${x.id===DB.sel.f?' selected':''}>${esc(x.codigo)} · ${esc(x.nombre||'sin nombre')}</option>`).join('');
+ if(!f){$('#fTitle').textContent='Sin fórmulas';return;}
+ $('#fTitle').textContent='Fórmula '+f.codigo;$('#fBadge').innerHTML=badge(f.estado)+(f.ej?' '+badge('EJ','ejemplo'):'');
+ $('#fCodigo').value=f.codigo;$('#fNombre').value=f.nombre;$('#fEstado').value=f.estado;$('#fPadre').value=f.padre?(DB.formulas.find(x=>x.id===f.padre)||{}).codigo||'':'';$('#fTags').value=f.tags||'';$('#fNotas').value=f.notas||'';
+ $('#fObj').innerHTML='<option value="">—</option>'+DB.objetivos.map(o=>`<option value="${o.id}"${o.id===f.objetivoId?' selected':''}>${esc(o.nombre||o.hex)}</option>`).join('');
+ const row=(list,i,a,isAdd)=>{const m=mat(a.m);return `<tr><td><select data-l="${list}" data-i="${i}" data-k="m">${matOptions(a.m,isAdd?(x=>x.tipo!=='pasta'):(x=>!x.col))}</select></td><td class="num"><input type="number" step="0.01" min="0" data-l="${list}" data-i="${i}" data-k="p" value="${a.p}" style="max-width:96px;text-align:right" class="mono"></td>${isAdd?`<td class="num small muted">${m.rng&&m.rng[1]?nf(m.rng[0])+'–'+nf(m.rng[1]):'—'}</td>`:''}<td><button class="btn sm" data-del="${list}" data-i="${i}" aria-label="Quitar">✕</button></td></tr>`;};
+ $('#tBase').innerHTML=f.base.map((a,i)=>row('base',i,a,false)).join('');$('#tAdd').innerHTML=f.adds.map((a,i)=>row('adds',i,a,true)).join('')||'<tr><td colspan="4" class="muted small">Sin adiciones</td></tr>';
+ const {out,sb}=chequeos(f);const sa=f.adds.reduce((s,x)=>s+(+x.p||0),0);
+ $('#sumBase').textContent=nf(sb)+' %';$('#sumAdd').textContent=nf(sa)+' %';
+ $('#sumMsg').innerHTML=Math.abs(sb-100)<=0.01?'<div class="msg ok"><b>SUMA 100 %</b></div>':`<div class="msg bad"><span><b>REVISAR:</b> la base suma ${nf(sb)} %. Diferencia ${nf(100-sb)} %.</span> <button class="btn sm" id="btnNorm">Normalizar a 100</button></div>`;
+ if($('#btnNorm'))$('#btnNorm').onclick=()=>{f.base.forEach(x=>x.p=Math.round((+x.p||0)/sb*10000)/100);const d=100-f.base.reduce((s,x)=>s+x.p,0);if(f.base[0])f.base[0].p=Math.round((f.base[0].p+d)*100)/100;save();renderF();};
+ $('#fChecks').innerHTML=out.length?out.map(([k,t])=>`<div class="msg ${k}"><span>${t}</span></div>`).join(''):'<div class="msg ok">Sin alertas con los supuestos actuales.</div>';
+ $$('#v-formula [data-l]').forEach(el=>{
+  el.addEventListener('input',()=>{const l=f[el.dataset.l][+el.dataset.i];l[el.dataset.k]=el.dataset.k==='p'?(parseFloat(el.value)||0):el.value;save();
+   if(el.tagName==='SELECT'){renderF();return;}
+   const c=chequeos(f);$('#sumBase').textContent=nf(c.sb)+' %';$('#sumAdd').textContent=nf(f.adds.reduce((s,x)=>s+(+x.p||0),0))+' %';renderLote();});
+  if(el.tagName!=='SELECT')el.addEventListener('change',()=>renderF());});
+ $$('#v-formula [data-del]').forEach(b=>b.onclick=()=>{f[b.dataset.del].splice(+b.dataset.i,1);save();renderF();});
+ renderLote();renderProc(f);}
+function renderLote(){const f=curF();if(!f)return;const sb=f.base.reduce((s,x)=>s+(+x.p||0),0),sa=f.adds.reduce((s,x)=>s+(+x.p||0),0),tot=sb+sa;
+ $('#segLote').innerHTML=[100,250,500,1000,2500,5000].map(g=>`<button aria-pressed="${g===LOTE}">${g>=1000?(g/1000)+' kg':g+' g'}</button>`).join('');
+ $$('#segLote button').forEach((b,i)=>b.onclick=()=>{LOTE=[100,250,500,1000,2500,5000][i];$('#loteG').value=LOTE;renderLote();});
+ const g=LOTE,base=g; // las adiciones son % sobre la base seca
+ const rows=[...f.base.map(a=>({a,g:base*(+a.p||0)/100})),...f.adds.map(a=>({a,g:base*(+a.p||0)/100,add:true}))];
+ $('#tLote').innerHTML=rows.map(({a,g:gg,add})=>`<tr><td>${add?'+ ':''}${esc(mat(a.m).n)}</td><td class="num">${nf(a.p)}</td><td class="num">${tot?nf((+a.p||0)/tot*100):'—'}</td><td class="num"><b>${nf(gg,gg<10?2:1)}</b></td><td><input type="checkbox" aria-label="Pesado"></td></tr>`).join('');
+ const seco=rows.reduce((s,r)=>s+r.g,0),agua=seco*(+$('#loteAgua').value||0)/100,np=+$('#loteN').value||1;
+ $('#fLote').innerHTML=`<tr><td>Total seco</td><td class="num">${nf(tot)}</td><td class="num">100</td><td class="num">${nf(seco,1)} g</td><td></td></tr><tr><td>Agua de amasado</td><td></td><td></td><td class="num">${nf(agua,0)} g</td><td></td></tr><tr><td>Por probeta (${np})</td><td></td><td></td><td class="num">${nf(seco/np,1)} g</td><td></td></tr>`;}
+$('#loteG').oninput=e=>{LOTE=+e.target.value||100;renderLote();};$('#loteAgua').oninput=renderLote;$('#loteN').oninput=renderLote;
+function renderProc(f){const tieneTex=f.adds.some(a=>['chamota_f','chamota_m','ilmenita','mngran'].includes(a.m));const usaPasta=f.base.some(a=>a.m==='pasta_com');
+ const st=[
+  'Ponte respirador P100/FFP3, guantes de nitrilo y trabaja con ventilación. Revisa los avisos de seguridad de esta fórmula.',
+  usaPasta?'Si partes de pasta comercial húmeda: determina su humedad (pesa una muestra, sécala y vuelve a pesar) para convertir la base a peso seco. Alternativa: deja secar la pasta, desmenúzala y trabaja en seco.':'Pesa los componentes secos de la base con una balanza de 0,1 g (0,01 g para lotes pequeños).',
+  'Pesa los colorantes con balanza de 0,01 g. Para dosis menores a 0,5 g, prepara una dilución: mezcla el colorante con 10 veces su peso de base seca y toma la parte proporcional.',
+  'Mezcla los colorantes con una porción de base seca y pásalos por tamiz de malla 80 (o 60) para deshacer grumos; así se evitan motas no deseadas'+(tieneTex?'. Agrega la chamota, ilmenita o manganeso granular después del tamizado.':'.'),
+  'Incorpora el resto de la base y el agua de amasado (tabla del lote). Para pasta húmeda: forma una barbotina con el colorante y agrégala amasando hasta un color uniforme.',
+  'Amasa en espiral o cabeza de toro al menos 50–100 vueltas; corta la pasta para revisar que no queden vetas. Deja reposar envuelta 24 h si es posible.',
+  'Forma las probetas (por ejemplo 100 × 50 × 8 mm) y marca cada una con el código de la fórmula, el multiplicador de la serie y una línea de 100 mm.',
+  'Seca lento y parejo. Mide la línea en seco, bizcocha si es tu práctica habitual y cuece junto a conos testigo. Registra todo en Cocción.',
+  'Limpia con paño húmedo; decanta el agua de lavado y desecha el sólido como residuo; no lo viertas al alcantarillado.'];
+ $('#procSteps').innerHTML=st.map(s=>`<li>${esc(s)}</li>`).join('');}
+R.formula=()=>{if(!curF()&&DB.formulas[0])DB.sel.f=DB.formulas[0].id;renderF();};
+$('#fPick').onchange=e=>{DB.sel.f=e.target.value;save();renderF();};
+$('#btnFNew').onclick=()=>{const f=nuevaFormula({});DB.sel.f=f.id;save();renderF();};
+$('#btnAddBase').onclick=()=>{const f=curF();if(!f)return;f.base.push({m:'caolin',p:0});save();renderF();};
+$('#btnAddAdd').onclick=()=>{const f=curF();if(!f)return;f.adds.push({m:'fe2o3',p:1});save();renderF();};
+['fCodigo','fNombre','fTags','fNotas'].forEach(id=>$('#'+id).oninput=e=>{const f=curF();if(!f)return;const k={fCodigo:'codigo',fNombre:'nombre',fTags:'tags',fNotas:'notas'}[id];f[k]=id==='fNombre'||id==='fCodigo'?e.target.value.toUpperCase():e.target.value;save();});
+$('#fEstado').onchange=e=>{const f=curF();f.estado=e.target.value;save();renderF();};$('#fObj').onchange=e=>{curF().objetivoId=e.target.value;save();};
+$('#btnFSave').onclick=()=>{save();toast('Fórmula guardada');};
+$('#btnFDup').onclick=()=>{const f=curF();if(!f)return;const g=nuevaFormula({...JSON.parse(JSON.stringify(f)),id:undefined,codigo:undefined,padre:f.id,estado:'SUG',ej:false});g.id=uid('f');g.codigo=sigCodigo();DB.sel.f=g.id;save();renderF();toast('Versión '+g.codigo+' creada');};
+$('#btnFSerie').onclick=()=>{const f=curF();if(!f)return;const ms=$('#serieMult').value.split(/[;,\s]+/).map(x=>parseFloat(x.replace(',','.'))).filter(x=>x>0);
+ const col=a=>mat(a.m).col;let n=0;ms.forEach(m=>{if(Math.abs(m-1)<1e-9)return;const g=nuevaFormula({nombre:f.nombre+' ×'+nf(m),objetivoId:f.objetivoId,padre:f.id,estado:'SUG',tags:(f.tags||'')+', serie',base:JSON.parse(JSON.stringify(f.base)),adds:f.adds.map(a=>({m:a.m,p:col(a)?Math.round(a.p*m*100)/100:a.p})),notas:'Serie de '+f.codigo+': colorantes ×'+nf(m)});n++;});save();renderF();toast(n+' fórmulas de serie creadas (colorantes ×'+ms.join(' / ')+')');};
+$('#btnFDel').onclick=()=>{const f=curF();if(!f)return;$('#fConfirm').innerHTML=`<div class="confirm">¿Eliminar ${esc(f.codigo)}? Sus resultados quedarán sin fórmula. <button class="btn sm danger" id="okDel">Eliminar</button><button class="btn sm" id="noDel">Cancelar</button></div>`;
+ $('#okDel').onclick=()=>{DB.formulas=DB.formulas.filter(x=>x.id!==f.id);DB.sel.f=DB.formulas[0]?.id||'';$('#fConfirm').innerHTML='';save();renderF();};$('#noDel').onclick=()=>$('#fConfirm').innerHTML='';};
+
+/* ================== 4 · Cocción ================== */
+const curC=()=>DB.cocciones.find(c=>c.id===DB.sel.c)||null;
+const CF={cCodigo:'codigo',cFecha:'fecha',cHorno:'horno',cCono:'cono',cConoReal:'conoReal',cTmax:'tmax',cSoak:'soak',cAtm:'atm',cRed:'red',cEnf:'enf',cUbic:'ubic',cCurva:'curva',cNotas:'notas'};
+R.coccion=()=>{$('#cCono').innerHTML=CONOS.map(c=>`<option>${c.c}</option>`).join('');
+ $('#tConos').innerHTML=CONOS.map(c=>`<tr><td>Cono ${c.c}</td><td class="num">${c.t}</td><td class="small">${c.c==='6'?'Gres de media temperatura (supuesto actual)':c.c==='10'?'Gres de alta temperatura':''}</td></tr>`).join('');
+ $('#cPick').innerHTML=DB.cocciones.map(c=>`<option value="${c.id}"${c.id===DB.sel.c?' selected':''}>${esc(c.codigo)} · ${esc(c.fecha)}</option>`).join('');
+ const c=curC();Object.entries(CF).forEach(([id,k])=>{$('#'+id).value=c?(c[k]??''):'';});};
+Object.entries(CF).forEach(([id,k])=>$('#'+id).addEventListener('input',e=>{const c=curC();if(!c)return;c[k]=e.target.type==='number'?parseFloat(e.target.value):e.target.value;save();}));
+$('#cPick').onchange=e=>{DB.sel.c=e.target.value;R.coccion();};
+$('#btnCNew').onclick=()=>{const n=DB.cocciones.map(c=>parseInt((c.codigo||'').replace(/\D/g,''))||0);const c={id:uid('c'),codigo:'K-'+String((n.length?Math.max(...n):0)+1).padStart(3,'0'),fecha:hoy(),horno:DB.cfg.horno,cono:DB.cfg.cono,atm:DB.cfg.atm,enf:'natural',tmax:(CONOS.find(x=>x.c===DB.cfg.cono)||{}).t};DB.cocciones.push(c);DB.sel.c=c.id;save();R.coccion();};
+$('#btnCSave').onclick=()=>{save();toast('Cocción guardada');};
+
+/* ================== 5 · Resultado ================== */
+const curR=()=>DB.resultados.find(r=>r.id===DB.sel.r)||null;
+let IMG=null,GRAY=null,PICKM='probeta';
+R.resultado=()=>{const r=curR();
+ $('#rPick').innerHTML=DB.resultados.map(x=>{const f=DB.formulas.find(f=>f.id===x.formulaId);return `<option value="${x.id}"${x.id===DB.sel.r?' selected':''}>${esc(x.fecha)} · ${esc(f?f.codigo:'—')} ${esc(x.marca||'')}</option>`;}).join('');
+ $('#rForm').innerHTML=DB.formulas.map(f=>`<option value="${f.id}">${esc(f.codigo)} · ${esc(f.nombre)}</option>`).join('');
+ $('#rCoc').innerHTML=DB.cocciones.map(c=>`<option value="${c.id}">${esc(c.codigo)} · cono ${esc(c.cono)} · ${esc(c.atm)}</option>`).join('');
+ if(!r){$('#deVal').textContent='—';return;}
+ $('#rForm').value=r.formulaId;$('#rCoc').value=r.coccionId;$('#rFecha').value=r.fecha;$('#rMarca').value=r.marca||'';
+ $('#rHex').value=r.hex||'';$('#rL').value=r.lab?r.lab[0].toFixed(1):'';$('#rA').value=r.lab?r.lab[1].toFixed(1):'';$('#rB').value=r.lab?r.lab[2].toFixed(1):'';
+ $('#rBrillo').value=r.brillo||'mate';$('#rTex').value=r.tex||'lisa';$('#rVc').value=r.vc??'';$('#rVa').value=r.va??'';$('#rAbs').value=r.abs??'';$('#rCon').value=r.con??'';$('#rPs').value=r.ps??'';$('#rPh').value=r.ph??'';$('#rL0').value=r.l0??100;$('#rL1').value=r.l1??'';$('#rNotas').value=r.notas||'';
+ $$('#segDef button').forEach(b=>b.setAttribute('aria-pressed',(r.def||[]).includes(b.textContent)));
+ IMG=null;GRAY=null;if(r.foto){const im=new Image();im.onload=()=>{IMG=im;drawPhoto();};im.src=r.foto;}else{$('#photoWrap').hidden=true;}
+ $('#rValMsg').innerHTML='';compare();};
+function objDeR(r){const f=DB.formulas.find(f=>f.id===r.formulaId);return f?DB.objetivos.find(o=>o.id===f.objetivoId):null;}
+function compare(){const r=curR();if(!r)return;const o=objDeR(r);
+ $('#cmpT').parentElement.style.display='grid';$('#cmpT').style.background=o?o.hex:'transparent';$('#cmpT').style.color=o&&o.lab[0]<55?'#fff':'#111';$('#cmpT').textContent='OBJETIVO '+(o?o.hex:'—');
+ $('#cmpM').style.background=r.hex||'transparent';$('#cmpM').style.color=r.lab&&r.lab[0]<55?'#fff':'#111';$('#cmpM').textContent='MEDIDO '+(r.hex||'—');
+ if(!o||!r.lab){$('#deVal').textContent='—';$('#deKv').innerHTML='';$('#adjBox').innerHTML='<p class="small muted">Asocia la fórmula a un objetivo y registra el color medido.</p>';$('#deMsg').innerHTML='';return;}
+ const de=dE00(o.lab,r.lab);r.de=de;const [Lt,Ct,ht]=lch(...o.lab),[Lm,Cm,hm]=lch(...r.lab);let dh=hm-ht;if(dh>180)dh-=360;if(dh<-180)dh+=360;
+ $('#deVal').textContent=n2(de);const tol=o.tol||5;
+ $('#deMsg').innerHTML=de<=tol?`<div class="msg ok">Dentro de la tolerancia (≤ ${nf(tol)}).</div>`:`<div class="msg warn"><span><b>Fuera de tolerancia</b> (objetivo ≤ ${nf(tol)}).</span></div>`;
+ $('#deKv').innerHTML=`<dt>ΔL* claridad</dt><dd>${(Lm-Lt>0?'+':'')+n1(Lm-Lt)} ${Lm-Lt>2?'(más claro)':Lm-Lt<-2?'(más oscuro)':''}</dd><dt>ΔC* saturación</dt><dd>${(Cm-Ct>0?'+':'')+n1(Cm-Ct)} ${Cm-Ct>3?'(más vivo)':Cm-Ct<-3?'(más apagado)':''}</dd><dt>Δh tono</dt><dd>${(dh>0?'+':'')+nf(dh,0)}° ${Math.abs(dh)>6?(dh>0?'(gira hacia amarillo/verde)':'(gira hacia rojo/violeta)'):''}</dd><dt>Brillo / textura</dt><dd>${esc(r.brillo)} / ${esc(r.tex)} vs ${esc(o.brillo)} / ${esc(o.textura)}</dd>`;
+ const s=[];const dL=Lm-Lt;
+ if(dL>2)s.push(`Quedó más claro: aumentar los colorantes principales ×${nf(factorAjuste(dL),2)}.`);
+ if(dL<-2)s.push(`Quedó más oscuro: reducir los colorantes principales ×${nf(factorAjuste(dL),2)}.`);
+ if(Cm-Ct<-4)s.push('Más apagado de lo buscado: reducir manganeso o cobalto que agrisan, o pasar a un pigmento comercial más limpio; revisar si la pasta base aporta hierro.');
+ if(Cm-Ct>4)s.push('Más saturado: bajar el colorante principal o agregar una traza de pigmento negro para apagar.');
+ if(Math.abs(dh)>8)s.push(dh<0?'Tono más rojizo de lo buscado: bajar hierro o agregar una traza de rutilo hacia amarillo.':'Tono más amarillo/verdoso de lo buscado: subir levemente el hierro (hacia rojo) o bajar rutilo/cromo.');
+ if(r.brillo!==o.brillo)s.push('Brillo distinto: revisar vitrificación (cono alcanzado, mantención) o el acabado (esmalte, bruñido).');
+ if((r.def||[]).includes('hinchamiento'))s.push('Hinchamiento: bajar fundentes colorantes (Fe, Mn), acortar la mantención o bajar medio cono.');
+ if(r.abs!=null&&r.abs>3)s.push(`Absorción ${nf(r.abs)} %: pasta poco vitrificada para gres; subir temperatura o mantención (afecta el color).`);
+ $('#adjBox').innerHTML=s.length?`<div class="msg info"><span><b>Sugerencias para el próximo ensayo</b> ${badge('SUG')}<br>${s.map(esc).join('<br>')}</span></div>`:'<div class="msg ok">Sin ajustes necesarios para este resultado.</div>';}
+function factorAjuste(dL){return Math.max(0.5,Math.min(2,1+dL/25));}
+function drawPhoto(){const cv=$('#cv'),W=Math.min(900,IMG.naturalWidth),H=Math.round(IMG.naturalHeight*W/IMG.naturalWidth);cv.width=W;cv.height=H;const x=cv.getContext('2d');x.drawImage(IMG,0,0,W,H);$('#photoWrap').hidden=false;}
+$('#rFoto').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const r=curR();if(!r){toast('Crea primero un resultado.');return;}const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const W=Math.min(900,im.naturalWidth),H=Math.round(im.naturalHeight*W/im.naturalWidth),c=document.createElement('canvas');c.width=W;c.height=H;c.getContext('2d').drawImage(im,0,0,W,H);r.foto=c.toDataURL('image/jpeg',0.82);const i2=new Image();i2.onload=()=>{IMG=i2;GRAY=null;drawPhoto();save();};i2.src=r.foto;};im.src=rd.result;};rd.readAsDataURL(fl);};
+$$('#segPick button').forEach(b=>b.onclick=()=>{PICKM=b.dataset.m;$$('#segPick button').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+$('#cv').onclick=e=>{const cv=$('#cv'),rc=cv.getBoundingClientRect(),x=Math.round((e.clientX-rc.left)*cv.width/rc.width),y=Math.round((e.clientY-rc.top)*cv.height/rc.height);
+ const R_=6,d=cv.getContext('2d').getImageData(Math.max(0,x-R_),Math.max(0,y-R_),R_*2+1,R_*2+1).data;let s=[0,0,0],n=0;for(let i=0;i<d.length;i+=4){s[0]+=d[i];s[1]+=d[i+1];s[2]+=d[i+2];n++;}s=s.map(v=>v/n);
+ if(PICKM==='gris'){GRAY=s;$('#pickInfo').textContent=`Carta gris marcada (R ${nf(s[0],0)} G ${nf(s[1],0)} B ${nf(s[2],0)}). Ahora toca la probeta.`;$$('#segPick button')[0].click();return;}
+ let rgb=s;if(GRAY){rgb=s.map((v,i)=>v*119/Math.max(1,GRAY[i]));$('#pickInfo').textContent='Color medido con corrección de carta gris (promedio de 13 × 13 px).';}else $('#pickInfo').textContent='Color medido sin corrección de gris (promedio de 13 × 13 px). Marca la carta gris para mejorar la medición.';
+ const r=curR();r.hex=rgb2hex(...rgb);r.lab=rgb2lab(...hex2rgb(r.hex));save();R.resultado();};
+$('#rHex').onchange=e=>{const r=curR();let v=e.target.value.trim();if(v&&v[0]!=='#')v='#'+v;if(!hex2rgb(v)){toast('HEX inválido');return;}r.hex=v.toUpperCase();r.lab=rgb2lab(...hex2rgb(v));save();R.resultado();};
+['rL','rA','rB'].forEach(id=>$('#'+id).onchange=()=>{const r=curR();const L=parseFloat($('#rL').value),a=parseFloat($('#rA').value),b=parseFloat($('#rB').value);if([L,a,b].some(isNaN))return;r.lab=[L,a,b];r.hex=rgb2hex(...lab2rgb(L,a,b));save();R.resultado();});
+const RF={rForm:'formulaId',rCoc:'coccionId',rFecha:'fecha',rMarca:'marca',rBrillo:'brillo',rTex:'tex',rVc:'vc',rVa:'va',rAbs:'abs',rCon:'con',rPs:'ps',rPh:'ph',rL0:'l0',rL1:'l1',rNotas:'notas'};
+Object.entries(RF).forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{const r=curR();if(!r)return;r[k]=e.target.type==='number'?(e.target.value===''?null:parseFloat(e.target.value)):e.target.value;
+ if((id==='rPs'||id==='rPh')&&r.ps>0&&r.ph>0){r.abs=Math.round((r.ph-r.ps)/r.ps*10000)/100;$('#rAbs').value=r.abs;}
+ if((id==='rL0'||id==='rL1')&&r.l0>0&&r.l1>0){r.con=Math.round((r.l0-r.l1)/r.l0*1000)/10;$('#rCon').value=r.con;}
+ save();compare();}));
+$$('#segDef button').forEach(b=>b.onclick=()=>{const r=curR();if(!r)return;r.def=r.def||[];const t=b.textContent;r.def=r.def.includes(t)?r.def.filter(x=>x!==t):[...r.def,t];b.setAttribute('aria-pressed',r.def.includes(t));save();compare();});
+$('#rPick').onchange=e=>{DB.sel.r=e.target.value;R.resultado();};
+$('#btnRNew').onclick=()=>{const r={id:uid('r'),formulaId:DB.sel.f||DB.formulas[0]?.id||'',coccionId:DB.sel.c||DB.cocciones[0]?.id||'',fecha:hoy(),marca:'',foto:'',hex:'',lab:null,brillo:'mate',tex:'lisa',def:[],l0:100};DB.resultados.push(r);DB.sel.r=r.id;save();R.resultado();};
+$('#btnRSave').onclick=()=>{save();toast('Resultado guardado');};
+$('#btnAdjust').onclick=()=>{const r=curR();if(!r||!r.lab)return toast('Falta el color medido.');const f=DB.formulas.find(f=>f.id===r.formulaId),o=objDeR(r);if(!f||!o)return toast('La fórmula no tiene objetivo asociado.');
+ const fac=factorAjuste(r.lab[0]-o.lab[0]);const g=nuevaFormula({nombre:f.nombre.replace(/ \(aj\..*\)$/,'')+' (aj. ×'+nf(fac,2)+')',objetivoId:f.objetivoId,padre:f.id,estado:'SUG',tags:f.tags,base:JSON.parse(JSON.stringify(f.base)),adds:f.adds.map(a=>({m:a.m,p:mat(a.m).col&&!['ilmenita','mngran'].includes(a.m)?Math.round(a.p*fac*100)/100:a.p})),notas:`Ajuste automático desde ${f.codigo} tras resultado ${r.fecha} (ΔE ${n2(dE00(o.lab,r.lab))}). Revisar manualmente las demás sugerencias.`});
+ DB.sel.f=g.id;save();toast('Versión ajustada '+g.codigo+' creada');show('formula');};
+$('#btnRVal').onclick=()=>{const r=curR();if(!r)return;const f=DB.formulas.find(f=>f.id===r.formulaId),o=objDeR(r);if(!f||!o)return;
+ const rs=DB.resultados.filter(x=>x.formulaId===f.id&&x.lab),coc=new Set(rs.map(x=>x.coccionId)),ok=rs.filter(x=>dE00(o.lab,x.lab)<=(o.tol||5)&&!(x.def||[]).length),cocOk=new Set(ok.map(x=>x.coccionId));
+ if(cocOk.size>=3){$('#rValMsg').innerHTML=`<div class="msg ok"><span><b>${esc(f.codigo)} cumple el criterio de validación:</b> ${cocOk.size} cocciones independientes dentro de ΔE ≤ ${nf(o.tol)} y sin defectos. <button class="btn sm" id="btnMarkComp">Marcar como comprobada</button></span></div>`;$('#btnMarkComp').onclick=()=>{f.estado='COMP';save();toast(f.codigo+' marcada como comprobada');$('#rValMsg').innerHTML='';};}
+ else $('#rValMsg').innerHTML=`<div class="msg info"><span>${esc(f.codigo)}: ${cocOk.size} de 3 cocciones independientes dentro de tolerancia y sin defectos (${rs.length} resultados en ${coc.size} cocciones). Sigue ensayando antes de marcarla como comprobada.</span></div>`;};
+
+/* ================== Biblioteca ================== */
+R.biblioteca=()=>{const fams=['blancos','cremas','amarillos','naranjos','cafés','rojos','rosados','violetas','azules','turquesas','verdes','grises','negros'];
+ if($('#qFam').options.length<2)$('#qFam').innerHTML+=fams.map(f=>`<option>${f}</option>`).join('');
+ if($('#qMat').options.length<2)$('#qMat').innerHTML+=DB.materias.map(m=>`<option value="${m.id}">${esc(m.n)}</option>`).join('');
+ const q=$('#qTxt').value.trim().toLowerCase(),e=$('#qEst').value,fa=$('#qFam').value,mm=$('#qMat').value;
+ const list=DB.formulas.filter(f=>{const o=DB.objetivos.find(o=>o.id===f.objetivoId);const txt=[f.codigo,f.nombre,f.tags,f.notas,o?.nombre,...[...f.base,...f.adds].map(a=>mat(a.m).n)].join(' ').toLowerCase();
+  return(!q||txt.includes(q))&&(!e||f.estado===e)&&(!fa||(o&&familia(o.lab)===fa))&&(!mm||[...f.base,...f.adds].some(a=>a.m===mm&&a.p>0));});
+ $('#libList').innerHTML=list.map(f=>{const o=DB.objetivos.find(o=>o.id===f.objetivoId);const rs=DB.resultados.filter(r=>r.formulaId===f.id&&r.lab);const best=rs.length&&o?Math.min(...rs.map(r=>dE00(o.lab,r.lab))):null;
+  return `<div class="lib-item"><i style="background:${o?o.hex:'transparent'}"></i><div style="min-width:0"><div class="row"><b class="mono">${esc(f.codigo)}</b> ${badge(f.estado)}${f.ej?badge('EJ','ejemplo'):''}</div><div class="small">${esc(f.nombre)}</div><div class="small muted">${[...f.adds].map(a=>esc(mat(a.m).n.split(' (')[0])+' '+nf(a.p)+' %').join(' · ')||'sin adiciones'} · ${rs.length} resultado(s)${best!=null?' · mejor ΔE '+n2(best):''}</div></div><div class="row"><button class="btn sm" data-open="${f.id}">Abrir</button></div></div>`;}).join('')||'<p class="muted">Sin fórmulas que coincidan.</p>';
+ $$('#libList [data-open]').forEach(b=>b.onclick=()=>{DB.sel.f=b.dataset.open;show('formula');});
+ if(DB.formulas.some(f=>f.ej)||DB.resultados.some(r=>r.ej))$('#libConfirm').innerHTML='<div class="row" style="margin-top:8px"><button class="btn sm danger" id="btnDelEj">Borrar datos de ejemplo</button></div>';else $('#libConfirm').innerHTML='';
+ if($('#btnDelEj'))$('#btnDelEj').onclick=()=>{$('#libConfirm').innerHTML='<div class="confirm">¿Borrar el objetivo, la fórmula, la cocción y el resultado de ejemplo? <button class="btn sm danger" id="okEj">Borrar</button><button class="btn sm" id="noEj">Cancelar</button></div>';$('#okEj').onclick=()=>{['objetivos','formulas','cocciones','resultados'].forEach(k=>DB[k]=DB[k].filter(x=>!x.ej));DB.sel={obj:DB.objetivos[0]?.id||'',f:DB.formulas[0]?.id||'',c:DB.cocciones[0]?.id||'',r:DB.resultados[0]?.id||''};OBJ=null;save();R.biblioteca();renderHdr();toast('Ejemplos borrados');};$('#noEj').onclick=()=>R.biblioteca();};
+ $('#tRes').innerHTML=DB.resultados.map(r=>{const f=DB.formulas.find(f=>f.id===r.formulaId),c=DB.cocciones.find(c=>c.id===r.coccionId),o=objDeR(r);const de=o&&r.lab?dE00(o.lab,r.lab):null;
+  return `<tr><td class="mono">${esc(r.fecha)}</td><td>${esc(f?f.codigo:'—')}</td><td>${esc(c?c.codigo+' · c'+c.cono+' '+c.atm:'—')}</td><td><span style="display:inline-block;width:18px;height:18px;border-radius:4px;vertical-align:middle;border:1px solid var(--line);background:${r.hex||'transparent'}"></span> <span class="mono small">${esc(r.hex||'')}</span></td><td class="num">${n2(de)}</td><td>${esc(r.brillo)} / ${esc(r.tex)}</td><td class="num">${nf(r.abs)}</td><td>${r.vc??'—'}/${r.va??'—'}</td></tr>`;}).join('')||'<tr><td colspan="8" class="muted">Sin resultados</td></tr>';};
+['qTxt','qEst','qFam','qMat'].forEach(id=>$('#'+id).addEventListener('input',()=>R.biblioteca()));
+function descargar(nombre,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nombre;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+$('#btnJson').onclick=()=>{descargar('taller-color-gres-respaldo-'+hoy()+'.json',new Blob([JSON.stringify(DB)],{type:'application/json'}));toast('Respaldo descargado');};
+$('#jsonIn').onchange=e=>{const fl=e.target.files[0];if(!fl)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);if(!d.formulas||!d.materias)throw 0;DB=d;OBJ=null;save();boot();toast('Respaldo restaurado');}catch(er){toast('El archivo no es un respaldo válido de esta app.');}};rd.readAsText(fl);};
+function cargarXLSX(){return new Promise((res,rej)=>{if(window.XLSX)return res();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+$('#btnXlsx').onclick=async()=>{try{await cargarXLSX();}catch(e){return toast('Sin conexión: la exportación a Excel necesita internet. Usa el respaldo JSON.');}
+ const wb=XLSX.utils.book_new(),ap=(n,rows)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.length?rows:[{}]),n);
+ ap('Leyenda',[{Nivel:'REF',Significado:'Valor de referencia (literatura o proveedor)'},{Nivel:'SUG',Significado:'Sugerencia experimental, sin validar'},{Nivel:'ENS',Significado:'En ensayo'},{Nivel:'COMP',Significado:'Comprobada: 3 cocciones dentro de tolerancia y sin defectos'},{Nivel:'Supuestos',Significado:`Cono ${DB.cfg.cono}, ${DB.cfg.atm}, horno ${DB.cfg.horno}, base ${mat(DB.cfg.base).n}`}]);
+ ap('Objetivos',DB.objetivos.map(o=>({ID:o.id,Nombre:o.nombre,HEX:o.hex,L:+o.lab[0].toFixed(2),a:+o.lab[1].toFixed(2),b:+o.lab[2].toFixed(2),Familia:familia(o.lab),Brillo:o.brillo,Textura:o.textura,Acabado:o.acabado,Uniformidad:o.unif,Tolerancia_dE:o.tol,Notas:o.notas,Fecha:o.fecha})));
+ const fr=[];DB.formulas.forEach(f=>{const sb=f.base.reduce((s,x)=>s+(+x.p||0),0),sa=f.adds.reduce((s,x)=>s+(+x.p||0),0);[...f.base.map(a=>({a,t:'Base'})),...f.adds.map(a=>({a,t:'Adición'}))].forEach(({a,t})=>fr.push({Codigo:f.codigo,Nombre:f.nombre,Estado:f.estado,Deriva_de:(DB.formulas.find(x=>x.id===f.padre)||{}).codigo||'',Objetivo:(DB.objetivos.find(o=>o.id===f.objetivoId)||{}).nombre||'',Tipo:t,Componente:mat(a.m).n,Pct_receta:+a.p,Pct_normalizado:+((+a.p)/(sb+sa)*100).toFixed(3),Suma_base:sb,Control_suma:Math.abs(sb-100)<=0.01?'SUMA 100 %':'REVISAR',Etiquetas:f.tags}));});
+ ap('Formulas',fr);
+ const lr=[];DB.formulas.forEach(f=>[100,500,1000,5000].forEach(g=>[...f.base,...f.adds].forEach(a=>lr.push({Codigo:f.codigo,Lote_seco_g:g,Componente:mat(a.m).n,Gramos:+(g*(+a.p||0)/100).toFixed(2)}))));ap('Lotes',lr);
+ ap('Cocciones',DB.cocciones.map(c=>({Codigo:c.codigo,Fecha:c.fecha,Horno:c.horno,Cono:c.cono,Cono_testigo:c.conoReal,Tmax_C:c.tmax,Mantencion_min:c.soak,Atmosfera:c.atm,Reduccion:c.red,Enfriamiento:c.enf,Ubicacion:c.ubic,Curva:c.curva,Notas:c.notas})));
+ ap('Resultados',DB.resultados.map(r=>{const f=DB.formulas.find(f=>f.id===r.formulaId),c=DB.cocciones.find(c=>c.id===r.coccionId),o=objDeR(r);return {Fecha:r.fecha,Formula:f?.codigo||'',Coccion:c?.codigo||'',Probeta:r.marca,HEX:r.hex,L:r.lab?+r.lab[0].toFixed(2):'',a:r.lab?+r.lab[1].toFixed(2):'',b:r.lab?+r.lab[2].toFixed(2):'',dE2000:o&&r.lab?+dE00(o.lab,r.lab).toFixed(2):'',Brillo:r.brillo,Textura:r.tex,Absorcion_pct:r.abs,Contraccion_pct:r.con,Val_color:r.vc,Val_acabado:r.va,Defectos:(r.def||[]).join(', '),Foto:r.foto?'sí (en respaldo JSON)':'no',Notas:r.notas};}));
+ ap('Materias_primas',DB.materias.map(m=>({ID:m.id,Nombre:m.n,Tipo:m.tipo,Disponible:m.disp?'sí':'no',Funcion_efecto:m.f,Rango_min:m.rng[0],Rango_max:m.rng[1],Max:m.max,Atmosfera:m.atm==='ox'?'solo oxidación':'ambas',Cono_max:m.tMax,Riesgo:HAZ[m.haz]?.t,Nivel_riesgo:HAZ[m.haz]?.nv,Manejo:HAZ[m.haz]?.d,Nivel_dato:m.nivel||'REF'})));
+ XLSX.writeFile(wb,'taller-color-gres-'+hoy()+'.xlsx');toast('Excel exportado');};
+
+/* ================== Materias y seguridad ================== */
+R.materias=()=>{$('#tMat').innerHTML=DB.materias.map(m=>`<tr><td><input type="checkbox" data-disp="${m.id}" ${m.disp?'checked':''} aria-label="Disponible"></td><td><b>${esc(m.n)}</b></td><td class="small">${esc(m.tipo)}</td><td class="small">${esc(m.f)}</td><td class="num">${m.rng[1]?nf(m.rng[0])+'–'+nf(m.rng[1]):'—'}</td><td class="num">${nf(m.max)}</td><td class="small">${m.atm==='ox'?'solo oxidación':'ambas'}${m.tMax?' · ≤ cono '+m.tMax:''}</td><td><span class="badge ${HAZ[m.haz]?.nv==='alto'?'b-DESC':HAZ[m.haz]?.nv==='medio'?'b-SUG':'b-COMP'}">${HAZ[m.haz]?.nv||'—'}</span></td></tr>`).join('');
+ $$('[data-disp]').forEach(c=>c.onchange=()=>{mat(c.dataset.disp).disp=c.checked;save();});};
+R.seguridad=()=>{$('#hazList').innerHTML=Object.entries(HAZ).map(([k,z])=>{const ms=DB.materias.filter(m=>m.haz===k).map(m=>m.n);return `<div class="haz ${z.nv}"><div class="row"><b>${esc(z.t)}</b><span class="badge ${z.nv==='alto'?'b-DESC':z.nv==='medio'?'b-SUG':'b-COMP'}">riesgo ${z.nv}</span></div><span>${esc(z.d)}</span><span class="small muted">Aplica a: ${ms.map(esc).join(', ')||'—'}</span></div>`;}).join('');};
+
+/* ================== Supuestos ================== */
+R.guia=()=>{$('#cfgCono').innerHTML=CONOS.map(c=>`<option>${c.c}</option>`).join('');$('#cfgBase').innerHTML=matOptions(DB.cfg.base,m=>m.tipo==='pasta'||m.tipo==='arcilla');
+ $('#cfgCono').value=DB.cfg.cono;$('#cfgAtm').value=DB.cfg.atm;$('#cfgHorno').value=DB.cfg.horno;$('#cfgBase').value=DB.cfg.base;};
+$('#btnCfgSave').onclick=()=>{DB.cfg={cono:$('#cfgCono').value,atm:$('#cfgAtm').value,horno:$('#cfgHorno').value,base:$('#cfgBase').value};save();renderAssume();toast('Supuestos guardados');};
+
+/* ================== Arranque ================== */
+async function boot(){if(!DB||!DB.formulas){const d=await loadDB();DB=d||seed();if(!d)save();}
+ // incorpora materias nuevas del catálogo si el respaldo es antiguo
+ MAT0.forEach(m=>{if(!DB.materias.find(x=>x.id===m.id))DB.materias.push({...m,nivel:'REF'});});
+ renderAssume();OBJ=null;let t='objetivo';try{t=localStorage.getItem('gresTab')||t;}catch(e){}if(location.hash&&$('#v-'+location.hash.slice(1)))t=location.hash.slice(1);show(t);renderHdr();}
+boot();
+</script>
+
+<script>
+/* App instalable (PWA) — versión 20261006-1841. Funciona sin conexión y se actualiza sola al abrirla con internet. */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.update();
+      reg.addEventListener('updatefound', () => { const w = reg.installing; if (!w) return;
+        w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) {
+          const b = document.createElement('div'); b.textContent = 'Nueva versión de Color Gres disponible — toque para actualizar';
+          b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:99999;background:#23458F;color:#fff;padding:10px 14px;border-radius:8px;font:600 14px system-ui,-apple-system,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer';
+          b.onclick = () => location.reload(); document.body.appendChild(b); } }); });
+    }).catch(() => {});
+  });
+}
+</script>
+</body></html>
